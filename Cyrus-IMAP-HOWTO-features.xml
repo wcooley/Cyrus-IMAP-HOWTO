@@ -1,0 +1,344 @@
+    <section id="features">
+        <title>Features in Detail</title>
+        <para></para>
+
+        <section>
+            <title>Sub-Servers</title>
+
+            <section>
+                <title><literal>master</literal></title>
+
+                <para>The <literal>master</literal> process acts as
+                the controller for all of the Cyrus sub-servers.
+                It performs tasks similar to those performed by
+                <literal>cron</literal>, <literal>inetd</literal>, and
+                init scripts, although only for Cyrus processes--it is
+                not a system-wide replacement for any of these.  It is
+                configured through the <filename>cyrus.conf</filename>
+                file, which has three sections: <literal>START</literal>,
+                <literal>SERVICES</literal>, and
+                <literal>EVENTS</literal>.</para>
+
+                <para>Each section has entries which are restricted to a
+                single line and composed of a tag name and parameters.
+                The tag name should be unique and the exact parameters
+                are specific to the particular section.  When Cyrus is
+                built with support for TCP Wrappers, the tag name is used
+                as the daemon name for <filename>hosts.allow</filename>
+                and <filename>hosts.deny</filename>.</para>
+
+                <para>All sections have a <parameter>cmd</parameter>, which
+                lists the program and parameters to be used when the entry
+                is invoked.  This entry is relative to the <parameter
+                class="command">--with-cyrus-prefix</parameter> supplied
+                at build time.</para>
+
+                <para>The <literal>START</literal> section contains
+                commands that are run then <literal>master</literal> is
+                started, much like an init script.  Usually, this section
+                contains nothing more than a <parameter>recover</parameter>
+                section, for checking the Cyrus databases before starting
+                processes that use those databases.  If your system is
+                configured to use <literal>idled</literal>, it is also
+                started here, because it does not directly listen on a
+                network or UNIX socket.</para>
+
+                <para>The following is a minimal listing of the
+                <literal>START</literal> section (taken from the example
+                <filename>master/conf/normal.conf</filename> from the
+                source distribution).
+<programlisting>START {
+  # do not delete this entry!
+  recover       cmd="ctl_cyrusdb -r"
+                                                                                                                                                                     
+  # this is only necessary if using idled for IMAP IDLE
+#  idled                cmd="idled"
+}
+</programlisting> 
+                </para>
+
+                <para>The <literal>SERVICES</literal> section contains
+                entries for the various sub-servers that run under the
+                system and listen on network sockets.  It is very much
+                like <literal>inetd</literal> in this respect.  </para>
+
+                <note> <para>Older versions of Cyrus (1.5 and
+                1.6) required <literal>inetd</literal> entries for
+                sub-servers.  In 2.0 and later versions, this section of
+                <filename>cyrus.conf</filename> replaces that.  If you
+                find documentation referring to <literal>inetd</literal>,
+                your documentation is obsolete!  </para> </note>
+
+                <para>The <parameter>listen</parameter> parameter lists the
+                TCP or UDP port or UNIX domain socket to be listened-on
+                for the particular service.  UNIX domain sockets are
+                paths in the filesystem and are differentiated from
+                ports by starting with a slash (<literal>/</literal>).
+                For TCP and UDP sockets, you can give either the
+                actual port number or the service name, as resolved
+                through <filename>/etc/services</filename> or other
+                NSS means.  TCP is the default protocol, although UDP
+                can be used with the <parameter>proto</parameter> parameter.
+                <parameter>prefork</parameter> and <parameter>maxchild</parameter>
+                provide control over the number of processes initially
+                forked to help manage load and the maximum number of child
+                processes to be started, to prevent too many processes from
+                overloading the system.  The <parameter>maxfds</parameter>
+                parameter limits the number of open file handles that
+                the each process my have open.</para>
+
+                <para>The following is an example listing of the
+                <literal>SERVICES</literal> (taken from the example
+                <filename>master/conf/normal.conf</filename> from the
+                source distribution).
+<programlisting># UNIX sockets start with a slash and are put into /var/imap/socket
+SERVICES {
+  # add or remove based on preferences
+  imap          cmd="imapd" listen="imap" prefork=0
+  imaps         cmd="imapd -s" listen="imaps" prefork=0
+  pop3          cmd="pop3d" listen="pop3" prefork=0
+  pop3s         cmd="pop3d -s" listen="pop3s" prefork=0
+  sieve         cmd="timsieved" listen="sieve" prefork=0
+                                                                                                                                                                     
+  # these are only necessary if receiving/exporting usenet via NNTP
+#  nntp         cmd="nntpd" listen="nntp" prefork=0
+#  nntps                cmd="nntpd -s" listen="nntps" prefork=0
+                                                                                                                                                                     
+  # at least one LMTP is required for delivery
+#  lmtp         cmd="lmtpd" listen="lmtp" prefork=0
+  lmtpunix      cmd="lmtpd" listen="/var/imap/socket/lmtp" prefork=0
+                                                                                                                                                                     
+  # this is only necessary if using notifications
+#  notify       cmd="notifyd" listen="/var/imap/socket/notify" proto="udp" prefork=1
+}
+</programlisting>
+                </para>
+
+                <para>The <literal>EVENTS</literal> section is similar
+                to <literal>cron</literal> in that it schedules commands
+                to be run.  Generally, these commands are for maintenence
+                of the various databases Cyrus uses.</para>
+
+                <para>This section has a <parameter>period</parameter>,
+                which is an interval in minutes to run the listed command,
+                and an <parameter>at</parameter>, which lists a time in
+                24-hour format to run the listed command.</para>
+
+                <para>The following is an example listing from the same
+                <filename>master/conf/normal.conf</filename>.
+
+<programlisting>EVENTS {
+  # this is required
+  checkpoint    cmd="ctl_cyrusdb -c" period=30
+ 
+  # this is only necessary if using duplicate delivery suppression,
+  # Sieve or NNTP
+  delprune      cmd="cyr_expire -E 3" at=0400
+ 
+  # this is only necessary if caching TLS sessions
+  tlsprune      cmd="tls_prune" at=0400
+}
+</programlisting>
+</para>
+
+            </section>
+
+            <section>
+                <title>imapd</title>
+
+                <para>As you might have guessed, the
+                <literal>imapd</literal> sub-server provides IMAP access
+                to the mail store to IMAP clients.  It can also provide
+                SSL-wrapped IMAP with the <parameter>-s</parameter>
+                parameter.</para>
+            </section>
+
+            <section>
+                <title>pop3d</title>
+
+                <para>The <literal>pop3d</literal> sub-server provides POP3
+                access to the mail store.  It can also provide SSL-wrapped
+                IMAP with the <parameter>-s</parameter> parameter.</para>
+            </section>
+
+            <section>
+                <title>timsieved</title>
+
+                <para>The <literal>timsieved</literal> sub-server provides
+                the network service for managing Sieve scripts installed on the
+                server.</para>
+            </section>
+
+            <section>
+                <title>lmtpd</title>
+
+                <para>The <literal>lmtpd</literal> sub-server receives
+                deliveries into the mail store, either through TCP/IP or
+                a UNIX domain socket.</para>
+            </section>
+
+            <section>
+                <title>notifyd</title>
+
+                <para>The <literal>notifyd</literal> sub-server provides
+                an interface sending notifications.  I've never actually
+                seen this in use and am not sure what it's purpose is,
+                because the docs are a little sketchy.  (FIXME).</para>
+            </section>
+
+            <section>
+                <title>fud</title>
+
+                <para>The <literal>fud</literal> sub-server provides
+                an interface for client access to information about the
+                mailbox, such as new mail count, total message count, and
+                recent message count.  I've not really seen this in use.
+                (FIXME).</para>
+            </section>
+
+            <section>
+                <title>idled</title>
+
+                <para>Unlike the other sub-servers,
+                <literal>idled</literal> is run in the
+                <literal>START</literal> section rather
+                than the <literal>SERVICE</literal> section.
+                <literal>idled</literal> can monitor a mailbox and
+                signal to listening <literal>imapd</literal> and
+                <literal>pop3d</literal> that new mail has arrived.</para>
+            </section>
+
+            <section>
+                <title>nntpd</title>
+
+                <para><emphasis>(New with 2.2.)</emphasis> Provides an
+                    NNTP interface for shared mailboxes.  (FIXME)</para>
+            </section>
+
+            <section>
+                <title>mupdate</title>
+
+                <para>Provides <literal>murder</literal> update
+                support.</para>
+            </section>
+        </section>
+
+        <section>
+            <title>Administrative</title>
+
+            <section>
+                <title>arbitron</title>
+
+                <para>The <literal>abritron</literal> process provides
+                readership statistics for mailboxes.  It does not seem to
+                be built by default.</para>
+            </section>
+
+            <section>
+                <title>cyradm</title>
+
+                <para>The <literal>cyradm</literal> command is a Perl
+                script which allows you to manage mailboxes.</para>
+            </section>
+
+            <section>
+                <title>chk_cyrus</title>
+
+                <para>The <literal>chk_cyrus</literal> command performs
+                consistency checks on Cyrus mailstore.</para>
+            </section>
+
+            <section>
+                <title>ctl_cyrusdb</title>
+
+                <para>The <literal>ctl_cyrusdb</literal> command performs
+                maintenence on the Cyrus databases, such as recovering,
+                check-pointing, and archiving.</para>
+            </section>
+
+            <section>
+                <title>ctl_deliver</title>
+
+                <para>The <literal>ctl_deliver</literal> command
+                performs maintenence on the Cyrus duplicate delivery
+                database.</para>
+            </section>
+
+            <section>
+                <title>ctl_mboxlist</title>
+
+                <para>The <literal>ctl_mboxlist</literal> command performs
+                maintenence on the Cyrus mailbox list.</para>
+            </section>
+
+            <section>
+                <title>cvt_cyrusdb</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>deliver</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>dohash</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>ipurge</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>mkimap</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>mbpath</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>quota</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>rehash</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>reconstruct</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>squatter</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>tls_prune</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>translatesieve</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>undohash</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>upgradesieve</title>
+                <para></para>
+            </section>
+        </section>
+    </section>

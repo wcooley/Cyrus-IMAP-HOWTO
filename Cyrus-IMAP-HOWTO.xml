@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"/usr/share/sgml/docbook/xml-dtd-4.2-1.0-22.1/docbookx.dtd" [
+<!ENTITY userprompt "<prompt>$ </prompt>">
+<!ENTITY rootprompt "<prompt># </prompt>">
+<!ENTITY appendix-a SYSTEM "Cyrus-IMAP-HOWTO-appendix-a.xml">
+<!ENTITY articleinfo SYSTEM "Cyrus-IMAP-HOWTO-articleinfo.xml">
+<!ENTITY frontmatter SYSTEM "Cyrus-IMAP-HOWTO-frontmatter.xml">
+<!ENTITY intro SYSTEM "Cyrus-IMAP-HOWTO-intro.xml">
+<!ENTITY features SYSTEM "Cyrus-IMAP-HOWTO-features.xml">
+<!ENTITY quickstart SYSTEM "Cyrus-IMAP-HOWTO-quickstart.xml">
+<!ENTITY quickstart-fedora SYSTEM "Cyrus-IMAP-HOWTO-quickstart-fedora.xml">
+<!ENTITY oldsetup SYSTEM "Cyrus-IMAP-HOWTO-oldsetup.xml">
+]>
+
+<article>
+    &articleinfo;
+    &frontmatter;
+    &intro;
+    &features;
+    &quickstart-fedora;
+    <!-- &quickstart; -->
+
+    <section>
+        <title>Maintenence</title>
+        <para></para>
+    </section>
+
+    <section>
+        <title>Troubleshooting</title>
+        <para></para>
+    </section>
+
+    <section>
+        <title>Security</title>
+        <para></para>
+    </section>
+
+    <section>
+        <title>Useful Additions</title>
+        <para></para>
+    </section>
+
+    <!--    &oldsetup; -->
+
+    &appendix-a;
+
+</article>

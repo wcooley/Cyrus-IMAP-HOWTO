@@ -1,0 +1,243 @@
+<section id="quickstart-fedora">
+    <title>Quickstart: Fedora Core 3</title>
+
+    <section>
+        <title>Introduction</title>
+
+        <para>Beginning with Core 3, Fedora includes Cyrus IMAP as a standard
+            package.  The RPMs are built indirectly from Simon Matter's SRPMs,
+            which I have used on Red Hat Enterprise Linux 3 systems and are
+            quite good.  While I do not recommend Fedora as a server platform
+            given the brevity of its lifespan, I will use it as a base for
+            demonstration since the Cyrus IMAP RPMs and dependencies are
+            already included.</para>
+
+
+        <para>The following guide gives steps without much explanation about
+            getting started using Cyrus IMAP on this platform; the procedure
+            for RHEL3 (or clones, like CentOS3) is very similar, albeit with
+            additional steps of downloading and perhaps rebuilding.</para>
+
+        <para>The configuration I will be using with use PAM authentication
+            with saslauthd, since PAM is configured by default.  Delivery
+            will happen with Postfix, because I eschew Sendmail where
+            possible.  (Sendmail information may be added at a later
+            date.)</para>
+
+    </section>
+
+    <section>
+        <title>Install Required Packages</title>
+
+        <para> You must remove the <filename>imap</filename> package; it is the
+            UW-IMAP server and conflicts with Cyrus IMAP.  The following
+            packages need to be installed:</para>
+
+            <itemizedlist>
+            <listitem><para><filename>postfix</filename></para></listitem>
+            <listitem><para><filename>cyrus-imapd</filename></para></listitem>
+            <listitem><para><filename>cyrus-imapd-utils</filename></para></listitem>
+            <listitem><para><filename>perl-Cyrus</filename></para></listitem>
+            <listitem><para><filename>cyrus-sasl</filename></para></listitem>
+            <listitem><para><filename>cyrus-sasl-plain</filename></para></listitem>
+            </itemizedlist> 
+
+        <para>
+            <screen>
+# rpm -e imap
+# yum install postfix cyrus-imapd cyrus-imapd-utils cyrus-sasl cyrus-sasl-plain
+...
+Performing the following to resolve dependencies:
+  Install: perl-Cyrus.i386 0:2.2.10-3.fc3
+Is this ok [y/N]: y
+...
+Complete!
+            </screen>
+        </para>
+    </section>
+
+    <section>
+        <title>Configure Cyrus SASL</title>
+
+        <para>Next, we configure Cyrus SASL to authenticate with PAM and
+        test.</para>
+
+        <para>Edit <filename>/etc/sysconfig/saslauthd</filename> and change
+        <varname>MECH</varname> to be <literal>pam</literal>.  It uses
+        <literal>shadow</literal> by default, which will authentication
+        regular UNIX accounts, but PAM is more flexible.</para>
+
+        <para>Start <filename>saslauthd</filename> by running its init
+        script and configure it to start on boot:
+
+<screen>
+# /sbin/service saslauthd start
+Starting saslauthd:                                        [  OK  ]
+# /sbin/chkconfig saslauthd on
+# chkconfig --list saslauthd
+saslauthd       0:off   1:off   2:on    3:on    4:on    5:on    6:off
+</screen>
+
+        </para>
+
+        <para>Now let's test that <filename>saslauthd</filename> is working.
+        (I assume here that you have already created a user account somewhere.)
+        Yes, you do have to specify the password on the command line; it is
+        an annoyance that should be fixed.
+
+<screen>
+# testsaslauthd -u wcooley -p password
+0: OK "Success."
+</screen>
+
+        </para>
+    </section>
+
+    <section>
+        <title>Configure Cyrus IMAP</title>
+
+        <para>Actually, this is pretty easy.  While a usual installation
+        requires modifying parameters in <filename>/etc/imapd.conf</filename>
+        and <filename>/etc/cyrus.conf</filename>, the Fedora RPMs are already
+        configured for general use, even SSL support.</para>
+
+        <para>All that must be done, then, is to start and test it
+        and create mailboxes.  First, we start it up:
+
+
+<screen>
+# /sbin/service cyrus-imapd start
+Starting cyrus-imapd: preparing databases... done.         [  OK  ]
+# /sbin/chkconfig cyrus-imapd on
+# /sbin/chkconfig --list cyrus-imapd 
+cyrus-imapd     0:off   1:off   2:on    3:on    4:on    5:on    6:off
+</screen>
+
+        And then test it with <filename>imtest</filename>:
+
+<screen>
+$ imtest -u wcooley localhost
+S: * OK imap.example.com Cyrus IMAP4 v2.2.10-Invoca-RPM-2.2.10-3.fc3 server ready
+C: C01 CAPABILITY
+S: * CAPABILITY IMAP4 IMAP4rev1 ACL QUOTA LITERAL+ MAILBOX-REFERRALS NAMESPACE UIDPLUS ID NO_ATOMIC_RENAME UNSELECT CHILDREN MULTIAPPEND BINARY SORT THREAD=ORDEREDSUBJECT THREAD=REFERENCES ANNOTATEMORE IDLE STARTTLS LISTEXT LIST-SUBSCRIBED X-NETSCAPE
+S: C01 OK Completed
+Please enter your password: 
+C: L01 LOGIN wcooley {6}
+S: + go ahead
+C: &quot;omitted&quot;
+S: L01 OK User logged in
+Authenticated.
+Security strength factor: 0
+. LOGOUT
+* BYE LOGOUT received
+. OK Completed
+Connection closed.
+</screen>            
+    
+        </para>
+
+        <para>Finally, we must create mailboxes with
+        <filename>cyradm</filename>.  But in order to do that, we must set
+        a password for the <literal>cyrus</literal> account:
+<screen>
+&rootprompt; passwd cyrus
+Changing password for user cyrus.
+New password: 
+Retype new password: 
+passwd: all authentication tokens updated successfully.
+</screen>
+        </para>
+
+        <para>Now login with <filename>cyradm</filename>:
+<screen>
+&userprompt; cyradm --user cyrus localhost
+IMAP Password: 
+localhost.localdomain>
+</screen>
+
+        And create an initial mailbox and view some stats: 
+<screen>
+localhost.localdomain> createmailbox user.wcooley
+localhost.localdomain> listmailbox user.wcooley
+user.wcooley (\HasNoChildren)  
+localhost.localdomain> listaclmailbox user.wcooley
+wcooley lrswipcda
+localhost.localdomain> listquotaroot user.wcooley
+
+</screen>
+
+    Alternatively, you can use abbreviations of the commands:
+<screen>
+localhost.localdomain> cm user.wcooley
+localhost.localdomain> lm user.wcooley
+user.wcooley (\HasNoChildren)  
+localhost.localdomain> lam user.wcooley
+wcooley lrswipcda
+localhost.localdomain> lqr user.wcooley
+
+</screen>
+
+        </para>
+
+        <para>At this point, you have a working IMAP server.  You might want
+        to start an IMAP client and login to the server, just to doublecheck
+        before actually delivering mail to it.</para>
+
+    </section>
+
+    <section>
+        <title>Configure Postfix</title>
+
+        <para>Since Sendmail is the default MTA in Fedora, you must change
+            the default with the <command>alternatives</command> command
+            after stopping Sendmail.
+<screen>
+# /sbin/service sendmail stop
+Shutting down sendmail:                                    [  OK  ]
+Shutting down sm-client:                                   [  OK  ]
+# chkconfig sendmail off
+# chkconfig --list sendmail
+sendmail        0:off   1:off   2:off   3:off   4:off   5:off   6:off
+# alternatives --config mta
+
+There are 2 programs which provide 'mta'.
+
+  Selection    Command
+-----------------------------------------------
+*+ 1           /usr/sbin/sendmail.sendmail
+   2           /usr/sbin/sendmail.postfix
+
+Enter to keep the current selection[+], or type selection number: 2
+# alternatives --display mta
+mta - status is manual.
+ link currently points to /usr/sbin/sendmail.postfix
+...
+</screen>
+
+        </para>
+
+        <para>Now we configure <parameter>mailbox_transport</parameter> in
+            <filename>/etc/postfix/main.cf</filename>.  Add this line to the
+            bottom:
+<screen>
+mailbox_transport = lmtp:unix:/var/lib/imap/socket/lmtp
+</screen>
+        </para>
+
+        <para>Finally, start up Postfix:
+<screen>
+# /sbin/service postfix start
+Starting postfix:                                          [  OK  ]
+# /sbin/chkconfig postfix on
+# /sbin/chkconfig --list postfix
+postfix         0:off   1:off   2:on    3:on    4:on    5:on    6:off
+</screen>
+
+        Assuming you have a functional SMTP server, you should now have a
+        functional IMAP server ready to go.</para>
+
+    </section>
+</section>
+<!-- vim:ft=docbkxml
+-->
+

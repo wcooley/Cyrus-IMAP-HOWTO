@@ -1,0 +1,73 @@
+Cyrus IMAP HOWTO Outline:
+o Introduction
+o Introduction to IMAP and Cyrus IMAP
+    o What is IMAP and Why Should I Use It?
+        o POP vs IMAP
+        o Cyrus vs mbox
+        o Cyrus vs Maildir
+    o What is Cyrus IMAP and Why Should I Use It?
+        o Cyrus Features
+        o Cyrus vs UW
+        o Cyrus vs Courier
+        o Cyrus vs Dovecot
+o Features in Detail
+    o Sub-servers:
+        o cyrus-master
+        o imapd
+        o ipop3d
+        o timsieved
+        o notifyd
+        o fud
+        o idled
+        o nntpd (2.2)
+        o mupdate
+    o Administrative:
+        o arbitron
+        o chk_cyrus
+        o ctl_cyrusdb
+        o ctl_deliver
+        o ctl_mboxlist
+        o cvt_cyrusdb
+        o cyradm
+        o deliver
+        o dohash
+        o ipurge
+        o mkimap
+        o mbpath
+        o quota
+        o rehash
+        o reconstruct
+        o squatter
+        o tls_prune
+        o translatesieve
+        o undohash
+        o upgradesieve
+    o Testing:
+        o imtest
+o Basic Setup
+    o MTAs
+        o Sendmail
+        o Postfix
+        o Exim
+    o Authentication
+        o sasldb2
+        o PAM
+        o LDAP
+    o TLS
+o Maintenence
+    o Managing Mailboxes
+o Troubleshooting
+o Security
+o Useful Additions
+    o Webmin Modules
+        o IMAPAdmin
+        o LDAP Users & Groups
+    o Autocreate Patch
+
+A. Installation
+B. Cyrus IMAP License
+C. Examples of Larger Setups
+    o CMU
+    o OSU
+D. Introduction to Sieve Filtering
+E. Programming with Cyrus

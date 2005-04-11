@@ -1,0 +1,226 @@
+    <section id="oldsetup">
+        <title>Cyrus IMAP Configuration <emphasis>(FIXME: OLD)</emphasis></title>
+
+        <section>
+            <title>Editing conf files</title>
+            <para>
+                <orderedlist>
+                    <listitem><para>Edit /etc/syslog.conf and add the following lines at the bottom:
+
+<programlisting>local6.debug    /var/adm/imapd.log
+auth.debug    /var/adm/auth.log</programlisting>
+                    </para></listitem>
+
+                    <listitem><para>Edit a new file /etc/imapd.conf and place in it the following lines: 
+
+<programlisting>configdirectory: /var/imap
+partition-default: /var/spool/imap
+admins: cyrus root
+srvtab: /var/imap/srvtab
+allowanonymouslogin: no
+sasl_passwd_check: shadow</programlisting>
+                    </para></listitem>
+                </orderedlist>
+            </para>
+
+            <para>If you don't want your password check to be the default
+            sasldb, you must specify which one of PAM, kerberos_v4,
+            passwd, shadow you wish to use. If PAM is the authentication
+            you desire for example, you would type: </para>
+
+            <para><command>sasl_passwd_check: pam</command></para>
+
+            <para>instead of the line above</para>
+
+        </section>
+
+
+        <section>
+            <title>Creating the necessary directories</title>
+
+            <para>This list of instructions will set up all the directories
+            necessary for imap.</para>
+
+            <para>
+                <programlisting>&rootprompt;<command>mkdir /var/adm</command>
+&rootprompt;<command>touch /var/adm/imapd.log /var/adm/auth.log</command>
+&rootprompt;<command>mkdir /var/imap /var/spool/imap /var/imap/srvtab</command>
+&rootprompt;<command>chown cyrus /var/imap /var/spool/imap /var/imap/srvtab</command>
+&rootprompt;<command>chgrp mail /var/imap /var/spool/imap /var/imap/srvtab</command>
+&rootprompt;<command>chmod 750 /var/imap /var/spool/imap /var/imap/srvtab</command>
+&rootprompt;<command>su cyrus</command></programlisting>
+
+            </para>
+
+            <para>You are now the user cyrus. This is necessary for the
+            files to have the correct owner and group.  Continue: </para>
+
+            <para>
+                <programlisting>&userprompt;<command>tools/mkimap</command>
+&userprompt;<command>cd /var/imap</command>
+&userprompt;<command>chattr +S . user quota user/* quota/*</command>
+&userprompt;<command>chattr +S /var/spool/imap</command>
+&userprompt;<command>exit</command></programlisting>
+            </para>
+
+            <para>You are now root again. The last command: </para>
+
+            <para><command>chattr +S /var/spool/mqueue</command></para>
+
+        </section>
+
+        <section>
+            <title>More configuration file editing <emphasis>(FIXME:
+            OLD)</emphasis></title>
+
+            <para>
+                <orderedlist>
+
+                    <listitem><para>Edit <filename>/etc/services</filename>
+                    and check for the following lines. If they do not
+                    exist, add them:
+
+<programlisting>pop3 110/tcp 
+imap 143/tcp 
+imsp 406/tcp 
+kpop 1109/tcp
+sieve 2000/tcp</programlisting>
+
+                    </para></listitem>
+
+                    <listitem><para>Edit
+                    <filename>/etc/inetd.conf</filename> and comment out
+                    any imap and pop3 lines and add the following:
+
+<programlisting>imap stream tcp nowait cyrus /usr/cyrus/bin/imapd imapd
+pop3 stream tcp nowait cyrus /usr/cyrus/bin/pop3d pop3d</programlisting>
+
+                    </para></listitem>
+
+                    <listitem><para>Edit
+                    <filename>/etc/sendmail.mc</filename> with care not
+                    to add extra spaces and add the following lines(do
+                    not copy and paste directly from this text as the
+                    tabs won't be added correctly):
+
+<programlisting>MAILER(local)
+MAILER(cyrus)
+define(`confLOCAL_MAILER',`cyrus') 
+LOCAL_RULE_0
+R$=N                   $: $#local $: $1
+R$=N &lt; @ $=w . &gt;       $: $#local $: $1
+Rbb + $+ &lt; @ $=w . &gt;   $#cyrusbb $: $1</programlisting>
+
+                    Use tabs to separate the data (i.e. R$=N
+                    has three tabs between it and $: $#local $:
+                    $1) Then run: <command>m4 sendmail.mc &gt;
+                    sendmail.cf</command></para></listitem>
+
+                    <listitem><para>Edit <filename>/etc/group</filename>
+                    and add the user daemon to the mail
+                    group.</para></listitem>
+
+                </orderedlist>
+            </para>
+
+        </section>
+
+    </section>
+
+    <section>
+        <title> Cyrus IMAP Implementation <emphasis>(FIXME: OLD)</emphasis></title>
+
+        <section>
+            <title>Add the cyrus administrator <emphasis>(FIXME: OLD)</emphasis></title>
+
+            <para>Run the following command to set up a user for cyrus</para>
+
+            <para><command>/usr/local/sbin/saslpasswd cyrus</command></para>
+
+        </section>
+
+        <section>
+            <title>Testing Cyrus IMAP <emphasis>(FIXME: OLD)</emphasis></title>
+
+            <para><programlisting><command>killall -HUP inetd</command>
+<command>su cyrus</command>
+<command>imtest -m login -p imap localhost</command></programlisting>
+            </para>
+
+            <para>Enter your password. If you see something like: <programlisting>S: L01 OK User logged in</programlisting>
+
+            Then the setup has been successful. Type <programlisting>. logout</programlisting> to log out. </para>
+
+        </section>
+
+    </section>
+
+    <section>
+        <title>Setting up users <emphasis>(FIXME: OLD)</emphasis></title>
+
+        <para>Still as the user cyrus, type the following commands. They
+        will set up the mailbox(es) for each user. Fill in the username
+        where you see the (username).</para>
+
+        <para>
+<programlisting><command>cyradm localhost</command>
+<command>cm user.joebob</command>  (for all the user joebob)
+<command>quit</command>
+<command>exit</command> (back as root)</programlisting>
+        </para>
+
+        <para>Now as root, enter a password for each username</para>
+
+        <para><command>saslpasswd (username)</command></para>
+
+    </section>
+
+    <section>
+        
+        <title>Delivery database pruning <emphasis>(FIXME: OLD)</emphasis></title>
+
+        <para>If you don't periodically prune the database of deliveries,
+        you can fill up your file system. Adding a cron job which will
+        run once a day is one way to do this. That involves going to
+        <filename>/etc/cron.daily</filename> and creating a file named cyrus-imapd. Inside
+        that file, put the following two lines of code:</para>
+
+        <para><programlisting>#!/bin/bash su cyrus -s /bin/bash -c
+        '/usr/cyrus/bin/deliver -E 3'</programlisting></para>
+
+        <para>Make this script executable by running: <command>chmod 755
+        cyrus-imapd</command></para>
+
+        <para>You should also create the deliverdb directory to store database
+        files in: </para> <para><command>mkdir /var/imap/deliverdb</command></para>
+
+    </section> 
+
+    <section>
+        
+        <title>Finishing up</title>
+
+        <para>Reboot the machine to make sure that everything has been
+        restarted under the new configuration</para>
+
+    </section>
+
+    <section>
+        <title>Troubleshooting</title>
+
+        <para>If you encounter any errors, you can do the following to view error messages:</para>
+
+        <para>
+<programlisting><command>tail /var/log/messages</command>
+<command>tail /var/adm/imapd.log</command>
+<command>killall sendmail &amp;&amp; sendmail -bd -X /root/error.log</command> (then read /root/error.log)</programlisting>
+        </para>
+
+        <para>If you are having "virtual memory exhausted errors" when
+        compiling, running</para>
+
+        <para><command>ulimit -d unlimited</command></para>
+
+        <para> as root has been reported to work.</para>
+
+    </section>

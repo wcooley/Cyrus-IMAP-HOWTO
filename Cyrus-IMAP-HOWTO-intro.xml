@@ -1,0 +1,94 @@
+    <section id="intro_imap_and_cyrus">
+        <title>Introduction to IMAP <emphasis>(FIXME: OLD)</emphasis></title>
+
+        <section>
+            <title>What is IMAP and Why Should I Use It?</title>
+
+            <para>This definition is from the <ulink
+            url="http://www.computeruser.com/resources/dictionary/dictionary.html">
+            <citetitle>ComputerUser.com High-Tech
+            Dictionary</citetitle></ulink>:</para>
+
+            <para><emphasis>I</emphasis>nternet
+            <emphasis>M</emphasis>essage <emphasis>A</emphasis>ccess
+            <emphasis>P</emphasis>rotocol. A protocol that allows a user to
+            perform certain electronic mail functions on a remote server
+            rather than on a local computer. Through IMAP the user can
+            create, delete, or rename mailboxes; get new messages; delete
+            messages; and perform search functions on mail. A separate
+            protocol is required for sending mail. Also called Internet
+            Mail Access Protocol.</para>
+
+
+            <section>
+                <title>IMAP vs. POP</title>
+
+                <para>IMAP allows the user to read email from many different
+                locations and accounts because email folders are stored on the
+                server, locally, at the home or the office, for instance. Even
+                saved and read messages are stored on the IMAP server. POP
+                only stores new unread messages on the server, and the read and
+                saved messages are stored locally. To force POP to not delete
+                email once it has been read can create many copies of the
+                same email, creating a waste of space and confusion. However,
+                IMAP is usually more complicated to set up. If you only have
+                one email account, POP is most likely your best choice. If you
+                want to access more than one account, from different locations,
+                IMAP will probably serve you most efficiently. </para>
+
+            </section>
+            <!-- Not too sure about having these here
+            <section>
+                <title>Cyrus vs Maildir</title>
+                <para></para>
+            </section>
+
+            <section>
+                <title>Cyrus vs mbox</title>
+                <para></para>
+            </section> -->
+        </section>
+
+
+        <section>
+
+            <title>What is Cyrus IMAP and Why Should I Use It?</title>
+
+            <section>
+                <title>Cyrus Features</title>
+
+                <para>Cyrus IMAP provides a robust, scalable mail
+                architecture.  It provides client access through IMAP
+                and POP3, the two most common mail presentation protocols
+                defined by open standards.  Through the use of the SASL
+                authentication, it supports a variety of authentication
+                mechanisms and back-ends.  It supports wrapping IMAP and
+                POP3 in SSL and negotiating TLS in-channel.  It supports
+                multiple storage pools for mailboxes, so adding mailbox
+                space is relatively straight-forward.</para>
+
+                <section>
+                    <title>Cyrus IMAP vs. Washington IMAP <emphasis>(FIXME: OLD)</emphasis></title>
+
+                    <para>Cyrus has its own mailbox database which is standalone
+                    and increases performance, whereas Washington uses the stanard
+                    UNIX mailbox format, which was designed for a smaller set of
+                    users. Washington is portable to more UNIX and non-UNIX systems
+                    than Cyrus. The main difference is that with Cyrus, you don't
+                    have to add new users to your linux box (i.e. in /etc/passwd)
+                    to add new mail users, and with Washington, you do.</para>
+                </section>
+
+                <section>
+                    <title>Cyrus vs. Courier</title>
+                    <para></para>
+                </section>
+
+                <section>
+                    <title>Cyrus vs. Other IMAP Servers</title>
+                    <para></para>
+                </section>
+            </section>
+        </section>
+
+    </section>

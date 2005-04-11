@@ -1,0 +1,151 @@
+<section id="quickstart">
+    <title>Basic Setup</title>
+
+    <section>
+        <title>Delivery from MTAs</title>
+
+        <para>
+            The first requirement for an IMAP server is actually getting
+            messages delivered to it.  Usually, Cyrus is used as the default
+            mailbox on the server and we will configure it as such.  However,
+            if you have a live server that is receiving mail and delivering it
+            into another system (such as through <filename>procmail</filename>
+            into <filename>/var/spool/mail/$USER</filename>), you might save
+            this section for later.  It is possible to selectively deliver
+            into Cyrus for certain users which might be useful during a
+            transition period.
+        </para>
+
+        <para>
+            To receive mail, Cyrus uses LMTP, which is a mail transfer
+            protocol like SMTP but much lighter-weight.  It is superior to
+            simply reading pipe input because it is more rigidly defined
+            and can more effecient.  For example, being able to deliver
+            multiple messages in one connection reduces the overhead from
+            building and tearing down the connection.
+        </para>
+
+        <para>
+            Cyrus used to use a program called <literal>deliver</literal>,
+            which read standard input and delivered messages into the mail
+            spool directly.  These days, <literal>deliver</literal> is just
+            a wrapper that reads a message from standard input and delivers
+            it via LMTP.  Since <literal>deliver</literal> is now considered
+            obsolete, it will not be covered here.
+        </para>
+
+        <section>
+
+            <title>Postfix</title>
+
+
+            <para>To configure Cyrus to receive message via LTMP,
+            make sure the <literal>lmtpunix</literal> line in
+            <filename>cyrus.conf</filename> is uncommented and looks
+            something like the following:
+
+<programlisting>
+SERVICES {
+# ...
+  lmtpunix      cmd="lmtpd" listen="/var/lib/imap/socket/lmtp" prefork=0
+# ...
+}
+</programlisting>
+
+            </para>
+
+            <para>On the Postfix side, ensure that the
+                <literal>lmtp</literal> service in
+                <filename>master.cf</filename> is not chrooted:
+
+<programlisting># ==========================================================================
+# service type  private unpriv  chroot  wakeup  maxproc command + args
+#               (yes)   (yes)   (yes)   (never) (50)
+# ==========================================================================
+lmtp      unix  -       -       n       -       -       lmtp</programlisting>
+
+                and set the <literal>mailbox_transport</literal> to the
+                LMTP socket listed in <filename>cyrus.conf</filename>:
+
+<programlisting>mailbox_transport = lmtp:unix:/var/lib/imap/socket/lmtp
+</programlisting>
+            </para>
+
+        </section>
+
+        <section>
+            <title>Sendmail</title>
+            <para>FIXME</para>
+        </section>
+    </section>
+
+    <section>
+        <title>Authentication</title>
+
+        <para>Cyrus IMAP supports authentication using Cyrus SASL.
+            SASL is the Simple Authentication Security Layer, defined
+            in RFC 2222 and other RFCs. In short, SASL does for
+            network protocols what PAM does for system authentication.
+            More information about Cyrus SASL is (will be) available
+            in the Cyrus-SASL-HOWTO.  This document will provide basic
+            configuration information for a typical setup.  For more
+            complex installations, see the Cyrus-SASL-HOWTO.</para>
+
+        <para>The simplest configuration for the average Linux
+            installation is to use SASL to authenticate with PAM.
+            Cyrus SASL provides the <filename>saslauthd</filename>
+            server which runs as root to be able to read the
+            <filename>/etc/shadow</filename>.  It listens on a
+            UNIX domain socket, through which the client libraries
+            pass authentication information and receive pass or
+            fail status.  Since most installations will have user
+            accounts already stored in <filename>/etc/passwd</filename>
+            and <filename>/etc/shadow</filename>, PAM provides a
+            convenient mechanism.</para>
+
+        <para>Run the command <command>saslauthd -v</command> and
+            verify that &quot;pam&quot;, &quot;shadow&quot; or
+            &quot;getpwent&quot; are available.  &quot;pam&quot;
+            is the preferred mechanism for a PAM-based system like
+            Red Hat.  &quot;shadow&quot; is a lower-layer directly
+            using the shadow file.  &quot;getpwent&quot; uses the
+            standard UNIX function that abstracts the reading of the
+            <filename>/etc/passwd</filename> (and shadow) and allows a
+            modular naming system with the Name Service Switch.  Of these,
+            PAM is undoubtedly the most flexible of the mechanisms.</para>
+
+        <para>If you're using Red Hat, then Cyrus SASL 2.1 should
+            already be installed with <filename>saslauthd</filename>
+            built with PAM support.  By default, however,
+            the init script uses the <literal>shadow</literal>
+            mechanism, which is more limited.  I recommend you
+            create <filename>/etc/sysconfig/saslauthd</filename>
+            with the line <literal>MECH=&quot;pam&quot;</literal> and
+            restart with <command>&rootprompt; /sbin/service saslauthd
+            restart</command>.  Ensure that it is configured to start at
+            boot time by running <command>&rootprompt; /sbin/chkconfig
+            saslauthd on</command>.</para>
+
+        <para>You can verify that it is working with the
+            <filename>testsaslauthd</filename> program.  Simply supply a
+            username and password for the <option>-u</option> and
+            <option>-p</option> options, respectively.</para>
+
+        <para>Let's make a quick run-through of everything we'd need to do 
+        
+        For example:
+<programlisting>&userprompt;<command>testsaslauthd -u joebob -p bobjoe</command>
+0: OK "Success."</programlisting>
+        </para>
+
+    </section>
+
+    <section>
+        <title>TLS/SSL</title>
+
+        <para></para>
+    </section>
+</section>
+
+<!-- vim:ft=docbkxml
+-->

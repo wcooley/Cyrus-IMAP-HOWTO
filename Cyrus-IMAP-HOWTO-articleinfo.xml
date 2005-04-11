@@ -1,0 +1,68 @@
+    <articleinfo>
+        <title>Cyrus IMAP HOWTO</title>
+
+        <author>
+            <firstname>Wil</firstname>
+            <surname>Cooley</surname>
+            <affiliation>
+                <orgname>Naked Ape Consulting</orgname>
+                <address><email>wcooley&#64;nakedape.cc</email></address>
+            </affiliation>
+        </author>
+        <authorinitials>WRC</authorinitials>
+
+        <pubdate>2004-02-02</pubdate>
+
+        <revhistory>
+            <revision>
+                <revnumber>2.0</revnumber>
+                <date>2004-02-02</date>
+                <authorinitials>WRC</authorinitials>
+
+                <revremark><emphasis>DRAFT</emphasis>Converted
+                to DocBook4.  Completely revised to cover
+                Cyrus IMAP 2.x. Moved Cyrus-SASL to a separate
+                document.<emphasis>DRAFT</emphasis></revremark>
+
+            </revision>
+
+            <revision>
+                <revnumber>1.3</revnumber>
+                <date></date>
+                <authorinitials>ASG</authorinitials>
+
+                <revremark> inetd.conf error fix, authentication
+                information added, more troubleshooting info.</revremark>
+
+            </revision>
+
+            <revision>
+                <revnumber>1.2</revnumber>
+                <date></date>
+                <authorinitials>ASG</authorinitials>
+
+                <revremark>SASL Config error fix, new postfix
+                configuration, and database pruning (thanks,
+                Jernej)</revremark>
+
+            </revision>
+
+            <revision>
+                <revnumber>1.1</revnumber>
+                <date></date>
+                <authorinitials>ASG</authorinitials>
+
+                <revremark>Fixed sendmail.mc configuration file error
+                and added IMAP information to the introduction.</revremark>
+
+            </revision>
+
+        </revhistory>
+
+        <abstract>
+
+            <para>This document presents a guide to installing,
+            configuring, and running Cyrus IMAP.</para>
+
+        </abstract>
+    </articleinfo>

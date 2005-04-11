@@ -1,0 +1,139 @@
+<appendix id="installation">
+    <title>Installation</title>
+
+    <abstract>
+        <para>The following sections provide information on installing
+            Cyrus IMAP.  It is expected that most people will be able to
+            use binary packages (or rebuilt source packages) for their
+            distribution; however, basic instructions for installing from
+            source are included.</para>
+    </abstract>
+
+    <section>
+        <title>Obtaining the Files</title>
+
+        <section>
+            <title>Cyrus IMAP Homepage</title>
+
+            <para>The homepage is currently located at:
+            <ulink url="http://asg.web.cmu.edu/cyrus/imapd"
+            >http://asg.web.cmu.edu/cyrus/imapd</ulink></para>
+
+        </section>
+
+        <section>
+            <title>Downloading the files</title>
+
+            <para>You will need both IMAP and SASL. Download the latest
+            files here: </para>
+
+            <para><ulink url="ftp://ftp.andrew.cmu.edu/pub/cyrus-mail"
+            >ftp://ftp.andrew.cmu.edu/pub/cyrus-mail</ulink></para>
+
+            <para>Download <filename>cyrus-imapd-X.X.X.tar.gz</filename>
+            and <filename>cyrus-sasl-X.X.X.tar.gz</filename> (where X.X.X
+            is the latest release) into your temporary directory.</para>
+
+            <para>I will use <filename>/tmp</filename> as the directory
+            I've uncompressed the files under for the rest of the
+            examples. </para>
+
+        </section>
+
+    </section>
+
+    <section>
+        <title>Installing from Source</title>
+
+        <section>
+            <title>Uncompress</title>
+
+            <para>The following commands will tar and gunzip cyrus IMAP
+            under <filename>/tmp</filename>. </para>
+
+            <para>
+                <programlisting>&userprompt;<command>cd /tmp</command>
+&userprompt;<command>tar -zxvf tar/cyrus-imapd-1.6.24.tar.gz</command>
+&userprompt;<command>cd cyrus-imapd-1.6.24</command></programlisting>
+
+            </para>
+
+        </section>
+
+        <section>
+            <title>A note on com_err.h</title>
+
+            <para>When I tried to install cyrus IMAP, I got errors
+            regarding the file com_err.h. My com_err.h was located
+            in <filename>/usr/include/et</filename>. It needs to reside in
+            <filename>/usr/include</filename>.  Run the following command to make
+            sure it is in the correct location:</para>
+
+            <para><command>locate com_err.h</command></para>
+
+            <para>This will show you where the file is. If it is
+            under <filename>/usr/include</filename>, you can skip
+            to the next section. If it is in another directory,
+            just copy it to <filename>/usr/include</filename>. If
+            it doesn't exist, download it here: <ulink
+            url="http://www.ludd.luth.se/~jnilsson/cvsweb/cvsweb.cgi/src/contrib/com_err"
+            >http://www.ludd.luth.se/~jnilsson/cvsweb/cvsweb.cgi/src/contrib/com_err</ulink>.</para>
+
+        </section>
+
+        <section>
+            <title>Configure</title>
+
+            <para><command>./configure --with-auth=unix</command></para>
+
+        </section>
+
+        <section>
+            <title>Adding the default user</title>
+
+            <para>Cyrus requires a user to own its files. The default
+            user is cyrus. The following command adds a user cyrus with
+            the group of "mail"</para>
+
+            <para><command>useradd -g mail cyrus</command></para>
+
+            <para>You'll want to set the password for user cyrus.</para>
+
+            <para><command>passwd cyrus</command></para>
+
+            <para>Type in the password you desire cyrus to have each time
+            you are prompted</para>
+
+        </section>
+
+        <section>
+            <title>Building the files</title>
+
+            <para>
+
+                <programlisting>&userprompt;<command>make depend</command>
+<command>&userprompt;make all CFLAGS=-O</command>
+<command>&rootprompt;make install</command></programlisting>
+            </para>
+
+            <para> That's it! You're ready to configure Cyrus IMAP. </para>
+
+        </section>
+    </section>
+
+    <section>
+        <title>Installing on Red Hat Distributions</title>
+        <para></para>
+    </section>
+
+    <section>
+        <title>Installing on Debian</title>
+        <para></para>
+    </section>
+
+    <section>
+        <title>Installing on Other Distributions</title>
+        <para></para>
+    </section>
+
+</appendix>
