@@ -1,0 +1,30 @@
+<section id="maintenance">
+    <title>Maintenance</title>
+    <section>
+        <title>Managing Mailboxes with <command>cyradm</command></title>
+
+        <section>
+            <title>Deleting a Mailbox</title>
+
+            <para>To delete a mailbox, you must fix give the admin user
+                'create' permissions on the mailbox.  To many people's
+                suprise, the admin does not have this permission by default.
+                Then you can delete the mailbox with 'dm'.
+
+                <screen>
+localhost> lam user.test
+test lrswipcda
+localhost.localdomain> dm user.test
+deletemailbox: Permission denied
+localhost> sam user.test cyrus c 
+localhost> lam user.test
+test lrswipcda
+cyrus c
+localhost> dm user.test
+                </screen>
+            </para>
+        </section>
+    </section>
+</section>
+<!-- vim:ft=docbkxml
+-->

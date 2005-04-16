@@ -9,8 +9,10 @@
 <!ENTITY frontmatter SYSTEM "Cyrus-IMAP-HOWTO-frontmatter.xml">
 <!ENTITY intro SYSTEM "Cyrus-IMAP-HOWTO-intro.xml">
 <!ENTITY components SYSTEM "Cyrus-IMAP-HOWTO-components.xml">
+<!ENTITY basics SYSTEM "Cyrus-IMAP-HOWTO-basics.xml">
 <!ENTITY quickstart SYSTEM "Cyrus-IMAP-HOWTO-quickstart.xml">
 <!ENTITY quickstart-fedora SYSTEM "Cyrus-IMAP-HOWTO-quickstart-fedora.xml">
+<!ENTITY maintenance SYSTEM "Cyrus-IMAP-HOWTO-maintenance.xml">
 <!ENTITY oldsetup SYSTEM "Cyrus-IMAP-HOWTO-oldsetup.xml">
 ]>
 
@@ -18,28 +20,25 @@
     &articleinfo;
     &frontmatter;
     &intro;
-    &features;
+    &components;
+    &basics;
     &quickstart-fedora;
-    <!-- &quickstart; -->
-
-    <section>
-        <title>Maintenence</title>
-        <para></para>
-    </section>
+    &quickstart;
+    &maintenance;
 
     <section>
         <title>Troubleshooting</title>
-        <para></para>
+        <para><emphasis>FIXME</emphasis></para>
     </section>
 
     <section>
         <title>Security</title>
-        <para></para>
+        <para><emphasis>FIXME</emphasis></para>
     </section>
 
     <section>
         <title>Useful Additions</title>
-        <para></para>
+        <para><emphasis>FIXME</emphasis></para>
     </section>
 
     <!--    &oldsetup; -->
@@ -47,3 +46,5 @@
     &appendix-a;
 
 </article>
+<!-- vim:ft=docbkxml
+-->

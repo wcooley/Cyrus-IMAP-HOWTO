@@ -44,6 +44,8 @@ o Features in Detail
         o upgradesieve
     o Testing:
         o imtest
+o Basics - Overview 
+o Quickstart: Fedora Core 3
 o Basic Setup
     o MTAs
         o Sendmail

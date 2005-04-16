@@ -1,0 +1,189 @@
+<section id="basics">
+    <title>Basics</title>
+
+    <para>There are lots of little bits of knowledge you need to know to get
+        started.  Here I attempt to catalog them.</para>
+
+    <section id="mailboxes">
+        <title>Mailboxes</title>
+
+        <section id="mailbox_namespace">
+
+            <title>Mailbox Namespace</title>
+
+            <para>User mailboxes live under 'user.&lt;username&gt;'.  To the
+            user, this mailbox is called simply <emphasis>INBOX</emphasis>;
+            sub-folders such as 'user.&lt;username&gt;.Sent', appear to the
+            user as 'INBOX.Sent' (NB: altnamespace).</para>
+
+        </section>
+
+        <section id="mailbox_storage">
+
+            <title>Mailbox Storage</title>
+
+            <para>Cyrus IMAP's mailbox storage is not Maildir, although it
+            is similar in some respects.  You should not expect to access
+            the mailboxes directly as you might other servers; only access
+            messages through POP3 or IMAP.</para>
+
+            <para>The mailbox storage does use databases, but it cannot use
+            SQL.  People occasionally ask about using SQL, but it does not
+            seem to be an appropriate use of SQL; the data is not especially
+            relational.  The data is hashed for fast lookups, which is
+            better done by file-based databases when data is not relational.
+            Most people who are ask about SQL storage have high-availability
+            in mind, which is easy with certain databases (like MySQL);
+            most highly-available Cyrus implementations use SANs and
+            clustered filesystems.
+            </para>
+            
+        </section>
+
+        <section id="mailbox_management">
+
+            <title>Mailbox Management</title>
+
+            <para>Mailboxes have to be created before being used, either with
+            'cyradm' or another tool (NB: autocreate patches).</para>
+
+            <para>Deleting a message in IMAP requires two steps: First, set
+            the \Deleted flag on the message.  Second, EXPUNGE the mailbox.
+            Many MUAs first move messages to a Trash folder, but given the
+            recoverability inherent in a two-step deletion, it is generally
+            considered a design flaw of the MUAs.</para>
+
+            <section id="mailbox_deletion">
+
+                <title>Deletion</title>
+
+                <para>Even an admin user (usually cyrus) cannot delete a
+                mailbox by default.  To delete a mailbox, cyrus needs to be
+                given the 'c' ('create') permission.</para>
+
+                <para>The delete permission, 'd', refers to the ability to
+                delete messages, not mailboxes.</para>
+
+            </section>
+
+        </section>
+    </section>
+
+    <section id="general_logging">
+        <title>General Logging</title>
+
+        <para>Cyrus IMAP logs to syslog facility local6 by default, but can
+        be overridden at compile-time.  (Simon Matter's RPMs default to the
+        mail facility.)  To configure logging, add a line like the following
+        to your <filename>/etc/syslog.conf</filename>:</para>
+
+        <para>
+            <screen>
+local6.info			/var/log/imapd.log
+            </screen>
+        </para>
+
+        <para>The usual rules for <filename>syslog.conf</filename> apply;
+            you must use tabs and not spaces.  If your platform, such as
+            Solaris, requires the log file exist before syslogd will write to
+            it, you must create it.  Finally, you must send syslogd the HUP
+            signal to make it reload its configuration or restart it.</para>
+
+        <para>You might also want to have it log to the same file as the
+            mail facility.  If you do not want to recompile, just change the
+        line in for the mail facility to include the local6 facility, such
+        as the following:</para>
+
+        <para>
+            <screen>
+mail.info;local6.info       /var/log/maillog
+            </screen>
+        </para>
+
+        <para>Your messages log might have a wildcard facility, so
+            you should exclude local6 from that by changing it to be similar
+            to the following:</para>
+
+        <para>
+            <screen>
+*.info;mail.none;authpriv.none;cron.none;local6.none /var/log/messages
+            </screen>
+        </para>
+
+        <para>If you want more messages, change "info" to "debug", but be
+            warned that some of the debugging messages are informational
+            and might not be generally cause for worry if you are not
+            experiencing problems.</para>
+
+    </section>
+
+    <section id="protocol_logging">
+        <title>Protocol Logging</title>
+
+        <para>As a debugging aid, Cyrus IMAP can also log protocol
+            conversations on a per-user basis.  Note that you cannot debug
+            the authentication process using this, because the protocol
+            logging is only associated with a username and until a user has
+            been successfully authenticated, the username is unknown.</para>
+
+        <para>To enable protocol logging, simply create a directory in
+            <filename>/var/lib/imap/log</filename> with the user's name you
+            wish to log.  Ensure, of course, that this directory is writable by
+            the user Cyrus runs as.  Cyrus will create files in this directory
+            with the name of the process ID under which it runs (which changes
+            per connection due to the forking server model it uses).</para>
+
+        <para>
+            <screen>
+# cd /var/lib/imap/log/
+# mkdir wcooley
+# chown cyrus wcooley/
+            </screen>
+        </para>
+
+        <para>I've created the directory and now I'm logging in with a mail
+        client, which selects my INBOX, checks messages and ACLs and logs
+        out.</para>
+
+        <para>
+            <screen>
+# pwd
+/var/lib/imap/log/wcooley
+# ls
+30069
+# less 30069
+---------- wcooley Thu Feb 17 11:20:35 2005
+
+&gt;1108668035&gt;a0001 OK User logged in
+&lt;1108668035&lt;a0002 LIST "" ""
+&gt;1108668035&gt;* LIST (\Noselect) "." ""
+a0002 OK Completed (0.000 secs 0 calls)
+&lt;1108668035&lt;a0003 SELECT "INBOX"
+&gt;1108668035&gt;* FLAGS (\Answered \Flagged \Draft \Deleted \Seen)
+* OK [PERMANENTFLAGS (\Answered \Flagged \Draft \Deleted \Seen \*)]
+* 0 EXISTS
+* 0 RECENT
+* OK [UIDVALIDITY 1107062834]
+* OK [UIDNEXT 1]
+a0003 OK [READ-WRITE] Completed
+&lt;1108668035&lt;a0004 MYRIGHTS "INBOX"
+&gt;1108668035&gt;* MYRIGHTS INBOX lrswipcda
+a0004 OK Completed
+&lt;1108668035&lt;a0005 NOOP
+&gt;1108668035&gt;a0005 OK Completed
+&lt;1108668042&lt;a0006 CLOSE
+&gt;1108668042&gt;a0006 OK Completed
+&lt;1108668042&lt;a0007 LOGOUT
+&gt;1108668042&gt;* BYE LOGOUT received
+a0007 OK Completed
+
+            </screen>
+        </para> 
+    </section>
+    <!--
+    <itemizedlist>
+        <listitem>
+        </itemizedlist> -->
+</section>
+<!-- vim:ft=docbkxml
+-->
