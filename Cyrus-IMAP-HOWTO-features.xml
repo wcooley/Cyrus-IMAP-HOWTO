@@ -1,5 +1,5 @@
-    <section id="features">
-        <title>Features in Detail</title>
+    <section id="components">
+        <title>Components</title>
         <para></para>
 
         <section>
@@ -221,17 +221,36 @@ SERVICES {
                 <para>Provides <literal>murder</literal> update
                 support.</para>
             </section>
+
+
+            <section>
+                <title>smmapd</title>
+
+                <para>Provides a Sendmail socket map daemon which can be
+                used by Sendmail to verify that a recipient exists before
+                accepting the message.</para>
+
+            </section>
         </section>
 
         <section>
-            <title>Administrative</title>
+            <title>Administrative Commands and Utilities</title>
 
             <section>
                 <title>arbitron</title>
 
                 <para>The <literal>abritron</literal> process provides
-                readership statistics for mailboxes.  It does not seem to
-                be built by default.</para>
+                readership statistics for mailboxes.  It does not seem
+                to be built by default.  It is unclear how commonly used
+                or well-maintained it is.</para>
+
+            </section>
+
+            <section>
+                <title>arbitronsort.pl</title> 
+
+                <para>Sorts output from <literal>arbitron</literal>.</para>
+            
             </section>
 
             <section>
@@ -242,10 +261,38 @@ SERVICES {
             </section>
 
             <section>
+                <title>cyrdump</title>
+
+                <para>(Guess???)  The <literal>cyrdump</literal> command
+                dumps mailboxes to a flat-text to standard output, saving
+                seen flags and other state. (NB: There appears to be no
+                reverse command.)</para>
+
+            </section>
+
+            <section>
+                <title>cyr_expire</title> 
+
+                <para>Expires entries from the duplicate delivery database.
+                Can also be used to control automatic expiration of messages
+                based on mailbox annotations.</para>
+
+            </section>
+
+            <section>
+                <title>cyrfetchnews</title>
+
+                <para>Reads articles from an NNTP peer and delivers them
+                into Cyrus.</para>
+
+            </section>
+
+            <section>
                 <title>chk_cyrus</title>
 
                 <para>The <literal>chk_cyrus</literal> command performs
                 consistency checks on Cyrus mailstore.</para>
+
             </section>
 
             <section>
@@ -273,72 +320,152 @@ SERVICES {
 
             <section>
                 <title>cvt_cyrusdb</title>
-                <para></para>
+
+                <para>The <literal>cvt_cyrusdb</literal> command is used
+                convert between the various database formats used by Cyrus.
+                It can be used, for example, to perform a dump of data from
+                binary databases to plain-text flat-file databases, which
+                can be more reliably backed-up.</para>
+
             </section>
 
             <section>
                 <title>deliver</title>
-                <para></para>
+
+                <para>The <literal>deliver</literal> command used to be
+                the point of entry for mail coming from the mail transfer
+                agent (Sendmail, Postfix, etc).  It reads messages from
+                standard input and delivers into the system.  However, with
+                the implementation of LMTP, it is considered obsolete.
+                In fact, it is just an LMTP client which delivers to
+                <literal>lmtpd</literal>.  It should not be used by the MTA to
+                deliver mail into the system unless the MTA does not support
+                LMTP.  It can still be useful, however, with external programs
+                such as <literal>procmail</literal>, which does not operate
+                as an LMTP client.  The <parameter>-q</parameter> may still
+                be useful to post over-quota alerts to users' mailboxes.</para>
+
             </section>
 
             <section>
                 <title>dohash</title>
-                <para></para>
+
+                <para>The <literal>dohash</literal> utility is a Perl script
+                which can be used to migrate from older directory layouts
+                and to implement spool directory hashing.</para>
+
             </section>
 
             <section>
                 <title>ipurge</title>
-                <para></para>
-            </section>
 
-            <section>
-                <title>mkimap</title>
-                <para></para>
+                <para>The <literal>ipurge</literal> utility expires and
+                deletes messages from mailboxes or partitions.  It can be
+                configured purge based on message age or mailbox size.</para>
+
             </section>
 
             <section>
                 <title>mbpath</title>
-                <para></para>
+
+                <para><literal>mbpath</literal> translates a mailbox name
+                into a filesystem path, taking into consideration spool
+                hashing and partitions.</para>
+
+            </section>
+
+            <section>
+                <title>mkimap</title>
+
+                <para>The <literal>mkimap</literal> command is a Perl script
+                which creates the directory heirarchies requires by Cyrus.
+                It is generally only needed when installing from source.</para>
+
+            </section>
+
+            <section>
+                <title>mknewsgroups</title> 
+
+                <para>(Guess???) Creates newsgroup heirarchies from news
+                "active" files.</para>
+
             </section>
 
             <section>
                 <title>quota</title>
-                <para></para>
+
+                <para>Not to be confused with the <literal>quota</literal>
+                command used for viewing filesystem quotas, this command
+                reports on quota usage and can also be used to repair
+                inconsistencies. (NB: The Cyrus <literal>quota</literal>
+                command is in section 8 of the man pages; the filesystem
+                quota is in section 1.)</para>
+
             </section>
 
             <section>
                 <title>rehash</title>
-                <para></para>
+
+                <para>The <literal>rehash</literal> script can be used to
+                convert between spool hash types: none, basic and full.</para>
+
             </section>
 
             <section>
                 <title>reconstruct</title>
-                <para></para>
+
+                <para>The <literal>reconstruct</literal> command is used
+                to rebuild mailboxes, which might have suffered database
+                corruption or restored from backup.  Note that, despite the
+                fact that the man page has listed a <parameter>-m</parameter>
+                option to rebuild the master mailbox list, it has never
+                actually worked.  It is important, therefore, to maintain
+                a backup of the mailbox list, perferably as plain-text.</para>
+
             </section>
 
             <section>
                 <title>squatter</title>
-                <para></para>
+
+                <para>The <literal>squatter</literal> utility may be one of
+                the most overlooked utilities in the Cyrus distribution.
+                It builds full-text mailbox indexes which allow very fast
+                server-side searching.</para>
+
             </section>
 
             <section>
                 <title>tls_prune</title>
-                <para></para>
+
+                <para><literal>tls_prune</literal> removed expired TLS
+                sessions from the session database.</para>
+
             </section>
 
             <section>
                 <title>translatesieve</title>
-                <para></para>
+
+                <para>The <literal>translatesieve</literal> command is
+                used to update Sieve scripts when implementing alternative
+                namespaces.</para>
+
             </section>
 
             <section>
                 <title>undohash</title>
-                <para></para>
+
+                <para>The <literal>undohash</literal> command flattens
+                directory heirarchies which had been previously hashed.</para>
+
             </section>
 
             <section>
                 <title>upgradesieve</title>
-                <para></para>
+
+                <para>This command migrates the <literal>timsieved</literal>
+                storage from older versions, which used to use a hardlink
+                to indicate the active script but now uses a symlink.</para>
+
             </section>
         </section>
     </section>
