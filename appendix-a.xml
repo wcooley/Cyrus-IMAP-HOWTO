@@ -42,7 +42,7 @@
 
     </section>
 
-    <section>
+    <section id="source-install">
         <title>Installing from Source</title>
 
         <section>
@@ -121,21 +121,22 @@
         </section>
     </section>
 
-    <section>
+    <!--
+    <section id="">
         <title>Installing on Red Hat Distributions</title>
         <para></para>
     </section>
 
-    <section>
+    <section id="">
         <title>Installing on Debian</title>
         <para></para>
     </section>
 
-    <section>
+    <section id="">
         <title>Installing on Other Distributions</title>
         <para></para>
     </section>
-
+    -->
 </appendix>
 <!-- vim:ft=docbkxml
 -->

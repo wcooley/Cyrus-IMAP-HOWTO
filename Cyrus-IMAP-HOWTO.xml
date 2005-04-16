@@ -31,17 +31,17 @@
     &quickstart;
     &maintenance;
 
-    <section>
+    <section id="troubleshooting">
         <title>Troubleshooting</title>
         <para><emphasis>FIXME</emphasis></para>
     </section>
 
-    <section>
+    <section id="security">
         <title>Security</title>
         <para><emphasis>FIXME</emphasis></para>
     </section>
 
-    <section>
+    <section id="addons">
         <title>Useful Additions</title>
         <para><emphasis>FIXME</emphasis></para>
     </section>
