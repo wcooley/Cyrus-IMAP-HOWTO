@@ -4,16 +4,21 @@
 "/usr/share/sgml/docbook/xml-dtd-4.2-1.0-22.1/docbookx.dtd" [
 <!ENTITY userprompt "<prompt>$ </prompt>">
 <!ENTITY rootprompt "<prompt># </prompt>">
-<!ENTITY appendix-a SYSTEM "Cyrus-IMAP-HOWTO-appendix-a.xml">
-<!ENTITY articleinfo SYSTEM "Cyrus-IMAP-HOWTO-articleinfo.xml">
-<!ENTITY frontmatter SYSTEM "Cyrus-IMAP-HOWTO-frontmatter.xml">
-<!ENTITY intro SYSTEM "Cyrus-IMAP-HOWTO-intro.xml">
-<!ENTITY components SYSTEM "Cyrus-IMAP-HOWTO-components.xml">
-<!ENTITY basics SYSTEM "Cyrus-IMAP-HOWTO-basics.xml">
-<!ENTITY quickstart SYSTEM "Cyrus-IMAP-HOWTO-quickstart.xml">
-<!ENTITY quickstart-fedora SYSTEM "Cyrus-IMAP-HOWTO-quickstart-fedora.xml">
-<!ENTITY maintenance SYSTEM "Cyrus-IMAP-HOWTO-maintenance.xml">
-<!ENTITY oldsetup SYSTEM "Cyrus-IMAP-HOWTO-oldsetup.xml">
+<!ENTITY multipage_url "http://nakedape.cc/info/Cyrus-IMAP-HOWTO/">
+<!ENTITY singlepage_url 
+    "http://nakedape.cc/info/Cyrus-IMAP-HOWTO/Cyrus-IMAP-HOWTO.html">
+<!ENTITY svn_url 
+    "https://haus.nakedape.cc/svn/public/trunk/writing/Cyrus-IMAP-HOWTO/">
+<!ENTITY appendix-a         SYSTEM "appendix-a.xml">
+<!ENTITY articleinfo        SYSTEM "articleinfo.xml">
+<!ENTITY frontmatter        SYSTEM "frontmatter.xml">
+<!ENTITY intro              SYSTEM "intro.xml">
+<!ENTITY components         SYSTEM "components.xml">
+<!ENTITY basics             SYSTEM "basics.xml">
+<!ENTITY quickstart         SYSTEM "quickstart.xml">
+<!ENTITY quickstart-fedora  SYSTEM "quickstart-fedora.xml">
+<!ENTITY maintenance        SYSTEM "maintenance.xml">
+<!ENTITY oldsetup           SYSTEM "oldsetup.xml">
 ]>
 
 <article>
