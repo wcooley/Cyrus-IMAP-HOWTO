@@ -57,6 +57,19 @@
 
         </itemizedlist>
     </section>
+
+
+    <section id="source">
+        <title>Source</title>
+
+        <para>The home of this document is at <link
+        url="http://nakedape.cc/info/Cyrus-IMAP-HOWTO"
+        >http://nakedape.cc/info/Cyrus-IMAP-HOWTO</link>.  The source
+        may be checked out from our public Subversion repository at <link
+        url="https://haus.nakedape.cc/svn/public/trunk/writing/Cyrus-IMAP-HOWTO/"
+        >https://haus.nakedape.cc/svn/public/trunk/writing/Cyrus-IMAP-HOWTO/</link>.</para>
+
+    </section>
 </section>
 
 
