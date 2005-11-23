@@ -58,6 +58,8 @@ o Basic Setup
     o TLS
 o Maintenence
     o Managing Mailboxes
+    o Dumping database files
+    o Backups
 o Troubleshooting
 o Security
 o Useful Additions
