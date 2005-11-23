@@ -1,17 +1,108 @@
     <section id="components">
         <title>Components</title>
-        <para></para>
 
+        <para>Cyrus IMAP is a powerful, modular piece of software.  Power
+            and modularity entails a certain degree of complexity.  </para>
+
+        <section>
+            <title>Filesystem Layout</title>
+
+            <para>Like most applications, a Cyrus IMAP installation has a
+            number of files, such as data files for messages, program files for
+            subservers, configuration files, etc.  Unfortunately, the default
+            locations for these files are at odds with the Linux Filesystem
+            Heirarchy Standard and depending on whether you installed from
+            source or installed from a package made by someone else, your
+            files could have one of several different locations.</para>
+
+            <section>
+                <title>Mail Spool</title>
+
+                <para>The mail spool is typically located in
+                <filename>/var/spool/mail</filename>.  This one fact remains
+                fairly consistent.  Below here, there may be three different
+                sorts of layouts, depending the selected level of mailbox
+                hashing.  If <literal>hashimapspool</literal> is zero,
+                then there will just be directories here that map directly
+                to mailboxes based on the first letter of the mailbox name.
+                For example, a mailbox for user "wcooley" will be located
+                at <filename>/var/spool/mail/w/user/wcooley</filename>.
+                For very large installations, however, this tends to result
+                in a disproporationate number of mailboxes under "s" compared
+                with "z."</para>
+
+                <para>If <literal>hashimapspool</literal> is 1 or true, then
+                the effect of <literal>fulldirhash</literal> comes into play.
+                If it is not set or zero, then mailboxes are set by the
+                username.  For example, for user "wcooley", the mailbox is
+                located in <filename>/var/spool/mail/w/user/wcooley</filename>.
+                However, if <literal>fulldirhash</literal> is set
+                to <literal>1</literal> or <literal>true</literal>,
+                then the mailbox directories are hashed with a true
+                hash function to a prime number "buckets," which
+                are represented as a single character.  For example,
+                <filename>/var/spool/imap/I/user/wcooley</filename>.  The use
+                of a true hash function provides nearly even distribution
+                of mailboxes in into directories.</para>
+
+                <para>To provide a consistent lookup mechanism for mailbox
+                names, the <filename>mbpath</filename> program is provided to
+                allow a consistent interface for determining the actual mailbox
+                path without having to account for the hashing yourself.</para>
+
+                <para>The <command>dohash</command> and
+                <command>undohash</command> scripts purport to convert
+                between the three levels of mailbox hashing.  However, they
+                may not work and are not terribly well documented, so it's
+                probably best to choose the correct one from the beginning.
+                Unless you plan on mucking about with the mailboxes (which
+                you probably should not do), there is no harm in using the
+                full hashing from the get-go.</para>
+
+            </section>
+
+            <section>
+                <title>Mailstore Metadata</title>
+
+                <para>Metadata for the mailstore is stored by default in
+                <filename>/var/imap</filename>, although for FHS compliance,
+                packages tend to use <filename>/var/lib/imap</filename>.
+                (FIXME)</para>
+
+            </section>
+
+            <section>
+                <title>Configuration</title>
+
+                <para>Configuration is stored in
+                <filename>/etc/imapd.conf</filename> and
+                <filename>/etc/cyrus.conf</filename>. (FIXME)</para>
+
+            </section>
+
+            <section>
+                <title>Binaries</title>
+
+                <para>Binaries could be nearly anywhere,
+                from <filename>/usr/cyrus</filename> to
+                <filename>/usr/lib/cyrus-imapd</filename>, with
+                programs intended to be used directly (such
+                as <command>cyradm</command>) linked to from
+                <filename>/usr/bin</filename>.  (FIXME)</para>
+
+            </section>
+
+        </section>
         <section>
             <title>Sub-Servers</title>
 
             <section>
-                <title><literal>master</literal></title>
+                <title><command>master</command></title>
 
-                <para>The <literal>master</literal> process acts as
+                <para>The <command>master</command> process acts as
                 the controller for all of the Cyrus sub-servers.
                 It performs tasks similar to those performed by
-                <literal>cron</literal>, <literal>inetd</literal>, and
+                <command>cron</command>, <command>inetd</command>, and
                 init scripts, although only for Cyrus processes--it is
                 not a system-wide replacement for any of these.  It is
                 configured through the <filename>cyrus.conf</filename>
@@ -60,13 +151,13 @@
                 <para>The <literal>SERVICES</literal> section contains
                 entries for the various sub-servers that run under the
                 system and listen on network sockets.  It is very much
-                like <literal>inetd</literal> in this respect.  </para>
+                like <command>inetd</command> in this respect.  </para>
 
                 <note> <para>Older versions of Cyrus (1.5 and
-                1.6) required <literal>inetd</literal> entries for
+                1.6) required <command>inetd</command> entries for
                 sub-servers.  In 2.0 and later versions, this section of
                 <filename>cyrus.conf</filename> replaces that.  If you
-                find documentation referring to <literal>inetd</literal>,
+                find documentation referring to <command>inetd</command>,
                 your documentation is obsolete!  </para> </note>
 
                 <para>The <parameter>listen</parameter> parameter lists the
@@ -115,8 +206,8 @@ SERVICES {
                 </para>
 
                 <para>The <literal>EVENTS</literal> section is similar
-                to <literal>cron</literal> in that it schedules commands
-                to be run.  Generally, these commands are for maintenence
+                to <command>cron</command> in that it schedules commands
+                to be run.  Generally, these commands are for maintenance
                 of the various databases Cyrus uses.</para>
 
                 <para>This section has a <parameter>period</parameter>,
@@ -147,7 +238,7 @@ SERVICES {
                 <title>imapd</title>
 
                 <para>As you might have guessed, the
-                <literal>imapd</literal> sub-server provides IMAP access
+                <command>imapd</command> sub-server provides IMAP access
                 to the mail store to IMAP clients.  It can also provide
                 SSL-wrapped IMAP with the <parameter>-s</parameter>
                 parameter.</para>
@@ -156,7 +247,7 @@ SERVICES {
             <section>
                 <title>pop3d</title>
 
-                <para>The <literal>pop3d</literal> sub-server provides POP3
+                <para>The <command>pop3d</command> sub-server provides POP3
                 access to the mail store.  It can also provide SSL-wrapped
                 IMAP with the <parameter>-s</parameter> parameter.</para>
             </section>
@@ -164,7 +255,7 @@ SERVICES {
             <section>
                 <title>timsieved</title>
 
-                <para>The <literal>timsieved</literal> sub-server provides
+                <para>The <command>timsieved</command> sub-server provides
                 the network service for managing Sieve scripts installed on the
                 server.</para>
             </section>
@@ -172,7 +263,7 @@ SERVICES {
             <section>
                 <title>lmtpd</title>
 
-                <para>The <literal>lmtpd</literal> sub-server receives
+                <para>The <command>lmtpd</command> sub-server receives
                 deliveries into the mail store, either through TCP/IP or
                 a UNIX domain socket.</para>
             </section>
@@ -180,7 +271,7 @@ SERVICES {
             <section>
                 <title>notifyd</title>
 
-                <para>The <literal>notifyd</literal> sub-server provides
+                <para>The <command>notifyd</command> sub-server provides
                 an interface sending notifications.  I've never actually
                 seen this in use and am not sure what it's purpose is,
                 because the docs are a little sketchy.  (FIXME).</para>
@@ -189,7 +280,7 @@ SERVICES {
             <section>
                 <title>fud</title>
 
-                <para>The <literal>fud</literal> sub-server provides
+                <para>The <command>fud</command> sub-server provides
                 an interface for client access to information about the
                 mailbox, such as new mail count, total message count, and
                 recent message count.  I've not really seen this in use.
@@ -200,12 +291,12 @@ SERVICES {
                 <title>idled</title>
 
                 <para>Unlike the other sub-servers,
-                <literal>idled</literal> is run in the
+                <command>idled</command> is run in the
                 <literal>START</literal> section rather
                 than the <literal>SERVICE</literal> section.
-                <literal>idled</literal> can monitor a mailbox and
-                signal to listening <literal>imapd</literal> and
-                <literal>pop3d</literal> that new mail has arrived.</para>
+                <command>idled</command> can monitor a mailbox and
+                signal to listening <command>imapd</command> and
+                <command>pop3d</command> that new mail has arrived.</para>
             </section>
 
             <section>
@@ -239,7 +330,7 @@ SERVICES {
             <section>
                 <title>arbitron</title>
 
-                <para>The <literal>abritron</literal> process provides
+                <para>The <command>abritron</command> process provides
                 readership statistics for mailboxes.  It does not seem
                 to be built by default.  It is unclear how commonly used
                 or well-maintained it is.</para>
@@ -249,21 +340,21 @@ SERVICES {
             <section>
                 <title>arbitronsort.pl</title> 
 
-                <para>Sorts output from <literal>arbitron</literal>.</para>
+                <para>Sorts output from <command>arbitron</command>.</para>
             
             </section>
 
             <section>
                 <title>cyradm</title>
 
-                <para>The <literal>cyradm</literal> command is a Perl
+                <para>The <command>cyradm</command> command is a Perl
                 script which allows you to manage mailboxes.</para>
             </section>
 
             <section>
                 <title>cyrdump</title>
 
-                <para>(Guess???)  The <literal>cyrdump</literal> command
+                <para>(Guess???)  The <command>cyrdump</command> command
                 dumps mailboxes to a flat-text to standard output, saving
                 seen flags and other state. (NB: There appears to be no
                 reverse command.)</para>
@@ -290,7 +381,7 @@ SERVICES {
             <section>
                 <title>chk_cyrus</title>
 
-                <para>The <literal>chk_cyrus</literal> command performs
+                <para>The <command>chk_cyrus</command> command performs
                 consistency checks on Cyrus mailstore.</para>
 
             </section>
@@ -298,30 +389,30 @@ SERVICES {
             <section>
                 <title>ctl_cyrusdb</title>
 
-                <para>The <literal>ctl_cyrusdb</literal> command performs
-                maintenence on the Cyrus databases, such as recovering,
+                <para>The <command>ctl_cyrusdb</command> command performs
+                maintenance on the Cyrus databases, such as recovering,
                 check-pointing, and archiving.</para>
             </section>
 
             <section>
                 <title>ctl_deliver</title>
 
-                <para>The <literal>ctl_deliver</literal> command
-                performs maintenence on the Cyrus duplicate delivery
+                <para>The <command>ctl_deliver</command> command
+                performs maintenance on the Cyrus duplicate delivery
                 database.</para>
             </section>
 
             <section>
                 <title>ctl_mboxlist</title>
 
-                <para>The <literal>ctl_mboxlist</literal> command performs
-                maintenence on the Cyrus mailbox list.</para>
+                <para>The <command>ctl_mboxlist</command> command performs
+                maintenance on the Cyrus mailbox list.</para>
             </section>
 
             <section>
                 <title>cvt_cyrusdb</title>
 
-                <para>The <literal>cvt_cyrusdb</literal> command is used
+                <para>The <command>cvt_cyrusdb</command> command is used
                 convert between the various database formats used by Cyrus.
                 It can be used, for example, to perform a dump of data from
                 binary databases to plain-text flat-file databases, which
@@ -332,25 +423,27 @@ SERVICES {
             <section>
                 <title>deliver</title>
 
-                <para>The <literal>deliver</literal> command used to be
+                <para>The <command>deliver</command> command used to be
                 the point of entry for mail coming from the mail transfer
                 agent (Sendmail, Postfix, etc).  It reads messages from
                 standard input and delivers into the system.  However, with
                 the implementation of LMTP, it is considered obsolete.
                 In fact, it is just an LMTP client which delivers to
-                <literal>lmtpd</literal>.  It should not be used by the MTA to
-                deliver mail into the system unless the MTA does not support
-                LMTP.  It can still be useful, however, with external programs
-                such as <literal>procmail</literal>, which does not operate
-                as an LMTP client.  The <parameter>-q</parameter> may still
-                be useful to post over-quota alerts to users' mailboxes.</para>
+                <command>lmtpd</command>.  It should not be used by the
+                MTA to deliver mail into the system unless the MTA does not
+                support LMTP.  It can still be useful, however, with external
+                programs such as <command>procmail</command>, which does not
+                operate as an LMTP client.  (FIXME: procmail has an option
+                now to be an LMTP client.)  The <parameter>-q</parameter>
+                may still be useful to post over-quota alerts to users'
+                mailboxes.</para>
 
             </section>
 
             <section>
                 <title>dohash</title>
 
-                <para>The <literal>dohash</literal> utility is a Perl script
+                <para>The <command>dohash</command> utility is a Perl script
                 which can be used to migrate from older directory layouts
                 and to implement spool directory hashing.</para>
 
@@ -359,7 +452,7 @@ SERVICES {
             <section>
                 <title>ipurge</title>
 
-                <para>The <literal>ipurge</literal> utility expires and
+                <para>The <command>ipurge</command> utility expires and
                 deletes messages from mailboxes or partitions.  It can be
                 configured purge based on message age or mailbox size.</para>
 
@@ -368,7 +461,7 @@ SERVICES {
             <section>
                 <title>mbpath</title>
 
-                <para><literal>mbpath</literal> translates a mailbox name
+                <para><command>mbpath</command> translates a mailbox name
                 into a filesystem path, taking into consideration spool
                 hashing and partitions.</para>
 
@@ -377,7 +470,7 @@ SERVICES {
             <section>
                 <title>mkimap</title>
 
-                <para>The <literal>mkimap</literal> command is a Perl script
+                <para>The <command>mkimap</command> command is a Perl script
                 which creates the directory heirarchies requires by Cyrus.
                 It is generally only needed when installing from source.</para>
 
@@ -394,10 +487,10 @@ SERVICES {
             <section>
                 <title>quota</title>
 
-                <para>Not to be confused with the <literal>quota</literal>
+                <para>Not to be confused with the <command>quota</command>
                 command used for viewing filesystem quotas, this command
                 reports on quota usage and can also be used to repair
-                inconsistencies. (NB: The Cyrus <literal>quota</literal>
+                inconsistencies. (NB: The Cyrus <command>quota</command>
                 command is in section 8 of the man pages; the filesystem
                 quota is in section 1.)</para>
 
@@ -406,7 +499,7 @@ SERVICES {
             <section>
                 <title>rehash</title>
 
-                <para>The <literal>rehash</literal> script can be used to
+                <para>The <command>rehash</command> script can be used to
                 convert between spool hash types: none, basic and full.</para>
 
             </section>
@@ -414,7 +507,7 @@ SERVICES {
             <section>
                 <title>reconstruct</title>
 
-                <para>The <literal>reconstruct</literal> command is used
+                <para>The <command>reconstruct</command> command is used
                 to rebuild mailboxes, which might have suffered database
                 corruption or restored from backup.  Note that, despite the
                 fact that the man page has listed a <parameter>-m</parameter>
@@ -427,7 +520,7 @@ SERVICES {
             <section>
                 <title>squatter</title>
 
-                <para>The <literal>squatter</literal> utility may be one of
+                <para>The <command>squatter</command> utility may be one of
                 the most overlooked utilities in the Cyrus distribution.
                 It builds full-text mailbox indexes which allow very fast
                 server-side searching.</para>
@@ -437,7 +530,7 @@ SERVICES {
             <section>
                 <title>tls_prune</title>
 
-                <para><literal>tls_prune</literal> removed expired TLS
+                <para><command>tls_prune</command> removed expired TLS
                 sessions from the session database.</para>
 
             </section>
@@ -445,7 +538,7 @@ SERVICES {
             <section>
                 <title>translatesieve</title>
 
-                <para>The <literal>translatesieve</literal> command is
+                <para>The <command>translatesieve</command> command is
                 used to update Sieve scripts when implementing alternative
                 namespaces.</para>
 
@@ -454,7 +547,7 @@ SERVICES {
             <section>
                 <title>undohash</title>
 
-                <para>The <literal>undohash</literal> command flattens
+                <para>The <command>undohash</command> command flattens
                 directory heirarchies which had been previously hashed.</para>
 
             </section>
@@ -462,7 +555,7 @@ SERVICES {
             <section>
                 <title>upgradesieve</title>
 
-                <para>This command migrates the <literal>timsieved</literal>
+                <para>This command migrates the <command>timsieved</command>
                 storage from older versions, which used to use a hardlink
                 to indicate the active script but now uses a symlink.</para>
 
