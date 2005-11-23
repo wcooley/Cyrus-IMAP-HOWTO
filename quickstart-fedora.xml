@@ -1,17 +1,17 @@
 <section id="quickstart-fedora">
-    <title>Quickstart: Fedora Core 3</title>
+    <title>Quickstart: Fedora Core</title>
 
     <section>
         <title>Introduction</title>
 
-        <para>Beginning with Core 3, Fedora includes Cyrus IMAP as a standard
-            package.  The RPMs are built indirectly from Simon Matter's SRPMs,
-            which I have used on Red Hat Enterprise Linux 3 systems and are
-            quite good.  While I do not recommend Fedora as a server platform
-            given the brevity of its lifespan, I will use it as a base for
-            demonstration since the Cyrus IMAP RPMs and dependencies are
-            already included.</para>
-
+        <para>Beginning with Core 3, Fedora includes Cyrus IMAP.  In Core 3,
+            the package is part of <emphasis>base</emphasis>, but in Core 4,
+            it was moved to <emphasis>extras</emphasis>.  The RPMs are built
+            indirectly from Simon Matter's SRPMs, which I have used on Red
+            Hat Enterprise Linux 3 systems and are quite good.  While I do
+            not recommend Fedora as a server platform given the brevity of
+            its lifespan, I will use it as a base for demonstration since
+            the Cyrus IMAP RPMs and dependencies are already included.</para>
 
         <para>The following guide gives steps without much explanation about
             getting started using Cyrus IMAP on this platform; the procedure
@@ -42,10 +42,16 @@
             <listitem><para><filename>cyrus-sasl-plain</filename></para></listitem>
             </itemizedlist> 
 
+        <para>The Perl module <filename>Term::ReadLine::Gnu</filename>
+            is also recommended, as it provides readline support to
+            <filename><command>cyradm</command></filename>.  An RPM is in
+            the RPMforge repository.</para>
+
         <para>
             <screen>
 # rpm -e imap
-# yum install postfix cyrus-imapd cyrus-imapd-utils cyrus-sasl cyrus-sasl-plain
+# yum install postfix cyrus-imapd cyrus-imapd-utils cyrus-sasl \
+> cyrus-sasl-plain perl-Term-ReadLine-Gnu
 ...
 Performing the following to resolve dependencies:
   Install: perl-Cyrus.i386 0:2.2.10-3.fc3
