@@ -4,11 +4,153 @@
         <title>Managing Mailboxes with <command>cyradm</command></title>
 
         <section>
+            <title>Running <command>cyradm</command></title>
+
+            <para>The <command>cyradm</command> command is the main tool that
+            Cyrus administrators use.  It allows an administrator to create,
+            delete and rename mailboxes and manage quotas and ACLs.</para>
+
+            <para>Assuming that your system is configured, running
+            <command>cyradm</command> should simply be a matter of typing
+            the command, although it is often located in an out-of-the-PATH
+            directory, so you might need the full path.  Inevitably, a
+            person will have problems authenticating the first time because
+            he has neglected to limit the advertised SASL mechanisms and
+            <command>cyradm</command> chooses a stronger mechanism than
+            he has support for.  If you are unable to login, specify the
+            --auth option with "login".  You might also not be working
+            as cyrus, so the "--user cyrus" option may also be necessary.
+            Of course, the IMAP server itself must'nt be forgotten, even
+            if it is only "localhost".  So that simple command of starting
+            <command>cyradm</command> ends up being something like this:
+
+            <screen>
+$ cyradm --user cyrus --auth login localhost
+</screen>
+            
+            </para>
+
+            <para>Upon successfully launching <command>cyradm</command>,
+            you will be presented with a prompt inviting you to start mucking
+            about with things.  A good place to start is, of course, "help."
+
+            <screen>
+$ cyradm --user cyrus --auth login localhost
+IMAP Password:localhost.localdomain> help
+authenticate, login, auth         authenticate to server
+chdir, cd                         change current directory
+createmailbox, create, cm         create mailbox
+deleteaclmailbox, deleteacl, dam  remove ACLs from mailbox
+deletemailbox, delete, dm         delete mailbox
+disconnect, disc                  disconnect from current server
+exit, quit                        exit cyradm
+help, ?                           show commands
+info                              display mailbox/server metadata
+listacl, lam, listaclmailbox      list ACLs on mailbox
+listmailbox, lm                   list mailboxes
+listquota, lq                     list quotas on specified root
+listquotaroot, lqr, lqm           show quota roots and quotas for mailbox
+mboxcfg, mboxconfig               configure mailbox
+reconstruct                       reconstruct mailbox (if supported)
+renamemailbox, rename, renm       rename (and optionally relocate) mailbox
+server, servername, connect       show current server or connect to server
+setaclmailbox, sam, setacl        set ACLs on mailbox
+setinfo                           set server metadata
+setquota, sq                      set quota on mailbox or resource
+version, ver                      display version info of current server
+xfermailbox, xfer                 transfer (relocate) a mailbox to a different server
+</screen>
+            </para>
+
+            <para>You may, of course, use any SASL mechanism you have
+            configured instead of "login", but login tends to work more readily
+            than more sophisticated mechanisms.  <command>cyradm</command>
+            need not be run on localhost either.  The administration protocol
+            is integrated in the IMAP protocol itself, so the tool has a
+            level of network transparency.  It does not, however, support
+            SSL/TLS, which is why using it on localhost is a good idead.</para>
+
+            <para>The command shell will pass any command it does not recognize
+            to your regular shell, which may be confusing at first.</para>
+
+            <para>Resist the temptation to give administrative rights
+            to accounts other than dedicated accounts--logging in with
+            administrative rights with a regular mail client may cause
+            unpredictable results.  It is not out of sheer laziness that
+            all of my examples use "cyrus" as the admin user.</para>
+
+            
+
+        </section>
+
+        <section>
+            <title>Listing Mailboxes and Wildcards</title>
+
+            <para>Listing users is done with the 'listmailbox' command,
+                usually run as 'lm'.  There are not a lot of options with
+                'lm', except in the wildcards that may be used.  As with
+                shell wildcards, '*' matches anything; '%', on the other
+                hand, matches anything <emphasis>except</emphasis> the
+                hierarchy separator.  This allows only listing the top-level
+                set of folders.  For example, let's list all of the folders:
+                <screen>
+localhost.localdomain> lm
+news.announce (\HasNoChildren)  user.foo.bar (\HasNoChildren)   
+user.foo (\HasChildren)         user.wcooley (\HasNoChildren)   
+</screen>
+                
+                Now let's list only users' folders:<screen>
+localhost.localdomain> lm user.*
+user.foo (\HasChildren)        user.wcooley (\HasNoChildren)  
+user.foo.bar (\HasNoChildren)  
+</screen>
+
+                Now, let's list only the top-level user folders:<screen>
+localhost.localdomain> lm user.%
+user.foo (\HasChildren)        user.wcooley (\HasNoChildren)  
+</screen>
+            
+            </para>
+        </section>
+
+        <section>
+            <title>Creating Mailboxes</title>
+
+            <para>In order for a user to receive e-mail with Cyrus, his
+                mailbox must first be created.  This is unlike many IMAP
+                servers, where the user's INBOX is created initially upon
+                delivery.  Because Cyrus does not rely on UNIX accounts
+                to authenticate users nor does it operate with any user's
+                privileges, it cannot know whether a mailbox is valid.</para>
+
+            <para>There are patches which allow automatic creation of a
+                user's INBOX (and pre-defined subfolders) upon login.
+                Provided that your users will login before the expect to
+                receive e-mail and that all available accounts should have
+                mailboxes, this is a good method of removing some
+                administrative burden.</para>
+
+            <para>Creating a mailbox manually is simply a matter of using
+                the 'createmailbox' command, usually abbreviated 'cm', and
+                providing the correct namespace.  For users, that namespace
+                is 'user.', so a mailbox for user 'wcooley' will be created
+                as 'user.wcooley'.
+
+                <screen>
+localhost.localdomain> cm user.wcooley
+localhost.localdomain> lm user.wcooley
+user.wcooley (\HasNoChildren)  
+</screen>
+            </para>
+
+        </section>
+
+        <section>
             <title>Deleting a Mailbox</title>
 
             <para>To delete a mailbox, you must fix give the admin user
-                'create' permissions on the mailbox.  To many people's
-                suprise, the admin does not have this permission by default.
+                'create' permissions on the mailbox.  To the surprise of
+                many, the admin does not have this permission by default.
                 Then you can delete the mailbox with 'dm'.
 
                 <screen>
@@ -21,9 +163,24 @@ localhost> lam user.test
 test lrswipcda
 cyrus c
 localhost> dm user.test
-                </screen>
+</screen>
             </para>
         </section>
+
+        <section>
+            <title>Managing Quotas</title>
+            <para></para>
+        </section>
+
+        <section>
+            <title>Managing Access Control Lists</title>
+            <para></para>
+        </section>
+    </section>
+
+    <section>
+        <title>Backups</title>
+            <para></para>
     </section>
 </section>
 <!-- vim:ft=docbkxml
