@@ -71,11 +71,33 @@ lmtp      unix  -       -       n       -       -       lmtp</programlisting>
 </programlisting>
             </para>
 
+            <para>A frequent source of trouble with LMTP delivery is the
+                permissions on the path to the LMTP socket; it is often the case that Cyrus and Postfix are
+                in separate groups--ensure that they share a group, such as <literal>mail</literal>.
+            </para>
+
+            <para>To check your permissions, run something like the following (as root):
+                <programlisting>&rootprompt;<command>P=/var/lib/imap/socket/lmtp; while [ "$P" != "/" ]; do ls -ld $P; P=$(dirname $P); done</command>
+srwxrwxrwx  1 root root 0 Jun 16 00:27 /var/lib/imap/socket/lmtp
+drwxr-x---  2 cyrus mail 4096 Jun 16 00:27 /var/lib/imap/socket
+drwxr-x---  14 cyrus mail 4096 Jun 16 00:57 /var/lib/imap
+drwxr-xr-x  18 root root 4096 Jun 16 00:25 /var/lib
+drwxr-xr-x  22 root root 4096 Jun 13 10:14 /var
+</programlisting>
+            </para>
+
         </section>
 
         <section>
             <title>Sendmail</title>
-            <para>FIXME</para>
+
+            <para>Delivering with Sendmail, like Postfix, requirs ignoring
+            the included but obsolete configuration, intended for use with
+            <literal>deliver</literal> and instead delivering with LMTP.
+            As usual when configuring Sendmail, changes should be made
+            to the M4 file and the resulting output file replacing
+            <filename>/etc/mail/sendmail.cf</filename>.</para>
+
         </section>
     </section>
 
