@@ -76,12 +76,13 @@ Complete!
         test.</para>
 
         <para>Edit <filename>/etc/sysconfig/saslauthd</filename> and change
-        <varname>MECH</varname> to be <literal>pam</literal>.  It uses
-        <literal>shadow</literal> by default, which will authentication
-        regular UNIX accounts, but PAM is more flexible.</para>
+            <varname>MECH</varname> to be <literal>pam</literal>.  Older
+            versions used <literal>shadow</literal> by default, which will
+            authenticate regular UNIX accounts, but PAM is more
+            flexible.</para>
 
-        <para>Start <filename>saslauthd</filename> by running its init
-        script and configure it to start on boot:
+        <para>Start <filename>saslauthd</filename> by running its init script
+            and configure it to start on boot:
 
 <screen>
 # /sbin/service saslauthd start
