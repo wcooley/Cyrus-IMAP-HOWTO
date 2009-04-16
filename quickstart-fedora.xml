@@ -24,14 +24,21 @@
             possible.  (Sendmail information may be added at a later
             date.)</para>
 
+        <para>These instructions have been updated and tested for Cyrus IMAP
+            2.3.13 on Fedora 10; they might work for older versions but have
+            not been tested.</para>
+
     </section>
 
     <section>
         <title>Install Required Packages</title>
 
         <para> You must remove the <filename>imap</filename> package; it is the
-            UW-IMAP server and conflicts with Cyrus IMAP.  The following
-            packages need to be installed:</para>
+            UW-IMAP server and conflicts with Cyrus IMAP.  Newer versions call
+            the package <filename>uw-imap</filename> and it may be no longer
+            installed by default. Obviously, if you have installed another IMAP
+            server such as <filename>dovecot</filename> you should remove that
+            also. The following packages need to be installed:</para>
 
             <itemizedlist>
             <listitem><para><filename>postfix</filename></para></listitem>
@@ -92,7 +99,7 @@ saslauthd       0:off   1:off   2:on    3:on    4:on    5:on    6:off
         an annoyance that should be fixed.
 
 <screen>
-# testsaslauthd -u wcooley -p password
+$ testsaslauthd -u username -p password
 0: OK "Success."
 </screen>
 
@@ -122,7 +129,7 @@ cyrus-imapd     0:off   1:off   2:on    3:on    4:on    5:on    6:off
         And then test it with <filename>imtest</filename>:
 
 <screen>
-$ imtest -u wcooley localhost
+$ imtest -t "" -u wcooley localhost
 S: * OK imap.example.com Cyrus IMAP4 v2.2.10-Invoca-RPM-2.2.10-3.fc3 server ready
 C: C01 CAPABILITY
 S: * CAPABILITY IMAP4 IMAP4rev1 ACL QUOTA LITERAL+ MAILBOX-REFERRALS NAMESPACE UIDPLUS ID NO_ATOMIC_RENAME UNSELECT CHILDREN MULTIAPPEND BINARY SORT THREAD=ORDEREDSUBJECT THREAD=REFERENCES ANNOTATEMORE IDLE STARTTLS LISTEXT LIST-SUBSCRIBED X-NETSCAPE
@@ -156,7 +163,8 @@ passwd: all authentication tokens updated successfully.
 
         <para>Now login with <filename>cyradm</filename>:
 <screen>
-&userprompt; cyradm --user cyrus localhost
+&userprompt; cyradm --user cyrus --auth PLAIN localhost
+verify error:num=18:self signed certificate
 IMAP Password: 
 localhost.localdomain>
 </screen>
