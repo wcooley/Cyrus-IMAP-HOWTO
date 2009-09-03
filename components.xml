@@ -331,9 +331,8 @@ SERVICES {
                 <title>arbitron</title>
 
                 <para>The <command>abritron</command> process provides
-                readership statistics for mailboxes.  It does not seem
-                to be built by default.  It is unclear how commonly used
-                or well-maintained it is.</para>
+                readership statistics for shared mailboxes.  
+                </para>
 
             </section>
 

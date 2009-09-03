@@ -117,69 +117,6 @@ mail.info;local6.info       /var/log/maillog
 
     </section>
 
-    <section id="protocol_logging">
-        <title>Protocol Logging</title>
-
-        <para>As a debugging aid, Cyrus IMAP can also log protocol
-            conversations on a per-user basis.  Note that you cannot debug
-            the authentication process using this, because the protocol
-            logging is only associated with a username and until a user has
-            been successfully authenticated, the username is unknown.</para>
-
-        <para>To enable protocol logging, simply create a directory in
-            <filename>/var/lib/imap/log</filename> with the user's name you
-            wish to log.  Ensure, of course, that this directory is writable by
-            the user Cyrus runs as.  Cyrus will create files in this directory
-            with the name of the process ID under which it runs (which changes
-            per connection due to the forking server model it uses).</para>
-
-        <para>
-            <screen>
-# cd /var/lib/imap/log/
-# mkdir wcooley
-# chown cyrus wcooley/
-            </screen>
-        </para>
-
-        <para>I've created the directory and now I'm logging in with a mail
-        client, which selects my INBOX, checks messages and ACLs and logs
-        out.</para>
-
-        <para>
-            <screen>
-# pwd
-/var/lib/imap/log/wcooley
-# ls
-30069
-# less 30069
----------- wcooley Thu Feb 17 11:20:35 2005
-
-&gt;1108668035&gt;a0001 OK User logged in
-&lt;1108668035&lt;a0002 LIST "" ""
-&gt;1108668035&gt;* LIST (\Noselect) "." ""
-a0002 OK Completed (0.000 secs 0 calls)
-&lt;1108668035&lt;a0003 SELECT "INBOX"
-&gt;1108668035&gt;* FLAGS (\Answered \Flagged \Draft \Deleted \Seen)
-* OK [PERMANENTFLAGS (\Answered \Flagged \Draft \Deleted \Seen \*)]
-* 0 EXISTS
-* 0 RECENT
-* OK [UIDVALIDITY 1107062834]
-* OK [UIDNEXT 1]
-a0003 OK [READ-WRITE] Completed
-&lt;1108668035&lt;a0004 MYRIGHTS "INBOX"
-&gt;1108668035&gt;* MYRIGHTS INBOX lrswipcda
-a0004 OK Completed
-&lt;1108668035&lt;a0005 NOOP
-&gt;1108668035&gt;a0005 OK Completed
-&lt;1108668042&lt;a0006 CLOSE
-&gt;1108668042&gt;a0006 OK Completed
-&lt;1108668042&lt;a0007 LOGOUT
-&gt;1108668042&gt;* BYE LOGOUT received
-a0007 OK Completed
-
-            </screen>
-        </para> 
-    </section>
     <!--
     <itemizedlist>
         <listitem>

@@ -18,6 +18,7 @@
 <!ENTITY quickstart         SYSTEM "quickstart.xml">
 <!ENTITY quickstart-fedora  SYSTEM "quickstart-fedora.xml">
 <!ENTITY maintenance        SYSTEM "maintenance.xml">
+<!ENTITY troubleshooting    SYSTEM "troubleshooting.xml">
 <!ENTITY oldsetup           SYSTEM "oldsetup.xml">
 ]>
 
@@ -30,11 +31,7 @@
     &quickstart-fedora;
     &quickstart;
     &maintenance;
-
-    <section id="troubleshooting">
-        <title>Troubleshooting</title>
-        <para><emphasis>FIXME</emphasis></para>
-    </section>
+    &troubleshooting;
 
     <section id="security">
         <title>Security</title>
