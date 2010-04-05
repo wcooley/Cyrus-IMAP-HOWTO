@@ -1,0 +1,37 @@
+#
+# Makefile template to automate rebuilding of formats from DocBook sources
+# $Id: Makefile.DocBook 476 2005-04-16 22:34:04Z wcooley $
+#
+
+SOURCE		= $(DOCNAME).xml
+
+PUB_TARGET	= ulke.nakedape.cc:/var/www/vhosts/nakedape.cc/docs/info
+PUB_FMTS	= xhtml xhtml-nochunks
+PREV_FMT	= xhtml-nochunks
+#XMLTO		= /usr/bin/xmlto 
+XMLTO		= /usr/bin/xmlto --skip-validation -m ../wrc_param.xsl
+XSL		= chunk.xsl
+
+all: $(PREV_FMT)
+
+xhtml:
+	$(XMLTO) -vv -o $(DOCNAME) $@ $(SOURCE)
+	cp stylesheet.css $(DOCNAME)
+
+xhtml-nochunks:
+	$(XMLTO) -v -o $(DOCNAME) $@ $(SOURCE)
+	cp stylesheet.css $(DOCNAME)
+
+test:
+	xmllint --noout --valid $(SOURCE)
+
+publish:  $(PUB_FMTS) push
+
+push:
+	rsync -e ssh -Cuavzr $(DOCNAME) $(PUB_TARGET)/
+
+clean:
+	-rm $(DOCNAME)/*
+
+.PHONY: all publish xhtml xhtml-nochunks clean test
+

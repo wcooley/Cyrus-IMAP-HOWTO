@@ -5,5 +5,5 @@
 
 DOCNAME		= Cyrus-IMAP-HOWTO
 
-include ../Makefile.DocBook
+include Makefile.DocBook
 
